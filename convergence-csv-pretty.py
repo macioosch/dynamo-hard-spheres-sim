@@ -16,6 +16,7 @@ files_by_N = [ glob("csv/convergence-{}-0.*.csv".format(N)) for N in Ns ]
 output_files = [ "csv/convergence-{}-pretty.csv".format(N) for N in Ns ]
 
 chosen_parameter = "msds_diffusion"
+skip = 10
 
 for input_files, output_file_name in izip(files_by_N, output_files):
     collisions = []
@@ -41,10 +42,13 @@ for input_files, output_file_name in izip(files_by_N, output_files):
 
     with open(output_file_name, "w+") as output_file:
         csv_writer = csv.writer(output_file, delimiter='\t')
-        csv_writer.writerow(["$C$"] + [ "$d={:.1f}$".format(k)
+        csv_writer.writerow( ["\\multicolumn{1}{c}{$C$}"]
+            + [ "\\multicolumn{1}{c}{"
+            + "$D$, $d^*={:.1f}$".format(k).replace(".",",") + "}"
             for k in sorted(parameter) ])
         csv_writer.writerows(zip( [int(c) for c in collisions], *[ i[1]
-            for i in sorted(parameter.items(), key=lambda x: x[0]) ]))
+            for i in sorted(parameter.items(), key=lambda x: x[0])
+            ])[skip-1::skip])
 
     system("csv2latex -ntzyx -s t -c 0.75 {} > {}".format(output_file_name,
         re.sub("\.csv", ".tex", output_file_name)))
