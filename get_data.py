@@ -31,25 +31,28 @@ for file in sorted(glob.glob("config.start.*.output.xml")):
         xmldoc.getElementsByTagName('ParticleCount')[0].attributes['val'].value))
 
 ZMD = np.sqrt(np.pi)*np.array(collisions) / (3*np.array(N_atoms)*np.array(times))
-
+pub_data = np.genfromtxt('published-values.csv', delimiter=' ')
+"""
 plt.figure(1)
 plt.plot(packings, ZMD, '-o', packings, pressures, '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("Pressure")
 plt.ylim([0,10])
-
-pub_data = np.genfromtxt('published-values.csv', delimiter=' ')
 plt.plot(pub_data.T[0] * np.pi/6, pub_data.T[1] - 1.0, '-o')
-
 plt.legend(["ZMD","Pressure","published ZMD"])
-
 """
 plt.figure(2)
+plt.semilogy(pub_data.T[0] * np.pi/6,
+        abs(ZMD[:len(pub_data.T[1])] - (pub_data.T[1] - 1.0)),
+        '-o')
+plt.xlabel("Packing fraction")
+plt.ylabel("Pressure difference")
+"""
+plt.figure(3)
 plt.semilogy(packings, msds_val, '-o')
 plt.semilogy(packings, msds_diffusion, '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("MSD, diffusion coef.")
 plt.legend(["MSD","diffusion coef."])
 """
-
 plt.show()
