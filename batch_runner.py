@@ -7,7 +7,7 @@ from pprint import pprint
 
 def safe_runner(command):
     try:
-        system(command + ">/dev/null")
+        system(command + "1>>std.out 2>>std.err")
     except:
         print("Oops! Command '{}' didn't work.".format(command))
     print("Command '{}' done by process {}.".format(command, getpid()))
@@ -19,19 +19,19 @@ def safe_runner(command):
 parser = argparse.ArgumentParser(
         description="Run multiprocess DynamO simulations with given "
         "parameters.")
-parser.add_argument("-p", "--packing", type=float, default=0.3,
-        help="the packing fraction, density is p*6/pi (default: 0.3)")
-parser.add_argument("-M", "--min_N_atoms", type=int, default=1372,
-        help="minimum number of atoms, exact will be ceil((N/4)^(1/3)) "
-        "(default: 1372 = 4*7^3)")
-parser.add_argument("-r", "--repeat", type=int, default=10,
-        help="how many times each run should be repeated with random "
-        "velocities for statistics (default: 10)")
-parser.add_argument("-e", "--equilibrate", type=int, default=1000000,
-        help="number of equlibrating collisions (default: 1000000)")
 parser.add_argument("-c", "--collisions", type=int, default=1000000,
         help="number of simulated collisions after equlibrating (default: "
         "1000000)")
+parser.add_argument("-e", "--equilibrate", type=int, default=1000000,
+        help="number of equlibrating collisions (default: 1000000)")
+parser.add_argument("-m", "--min_N_atoms", type=int, default=1372,
+        help="minimum number of atoms, exact will be ceil((N/4)^(1/3)) "
+        "(default: 1372 = 4*7^3)")
+parser.add_argument("-p", "--packing", type=float, default=0.3,
+        help="the packing fraction, density is p*6/pi (default: 0.3)")
+parser.add_argument("-r", "--repeat", type=int, default=10,
+        help="how many times each run should be repeated with random "
+        "velocities for statistics (default: 10)")
 
 args = parser.parse_args()
 

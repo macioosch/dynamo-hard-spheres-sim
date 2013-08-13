@@ -40,3 +40,7 @@ nosetests.xml
 # DynamO output
 *.xml
 *.bz2
+
+# Other
+*.out
+*.err
