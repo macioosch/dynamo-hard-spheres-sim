@@ -45,20 +45,20 @@ n_atoms = 4*n_cells**3
 
 base_name = "{}_{:0.12f}".format(n_atoms, args.packing) + "_{0:02d}_"
 
-start_configs = [ ("[ -f configs/" + base_name + "0.xml ] || dynamod -m 0 "
-    "-C {1} -d {2} --i1 0 -r 1 -o configs/" + base_name + "0.xml")
+start_configs = [ ("[ -f configs/" + base_name + "0.xml.bz2 ] || dynamod -m 0 "
+    "-C {1} -d {2} --i1 0 -r 1 -o configs/" + base_name + "0.xml.bz2")
     .format(run, n_cells, density) for run in range(args.repeat) ]
 
-equilibrated_configs = [ ("[ -f configs/" + base_name + "{1}.xml ] || "
-    "dynarun configs/" + base_name + "0.xml -c {1} -o configs/" + base_name
-    + "{1}.xml -E --out-data-file /dev/null").format(run, args.equilibrate)
+equilibrated_configs = [ ("[ -f configs/" + base_name + "{1}.xml.bz2 ] || "
+    "dynarun configs/" + base_name + "0.xml.bz2 -c {1} -o configs/" + base_name
+    + "{1}.xml.bz2 -E --out-data-file /dev/null").format(run, args.equilibrate)
     for run in range(args.repeat) ]
 
-simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml ] || "
-    "dynarun configs/" + base_name + "{1}.xml -c {2} -o configs/" + base_name +
-    "{3}.xml --out-data-file results/" + base_name + "{1}_{3}.xml").format(run,
-        args.equilibrate, args.collisions, args.collisions + args.equilibrate)
-    for run in range(args.repeat) ]
+simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
+    "dynarun configs/" + base_name + "{1}.xml.bz2 -c {2} -o configs/"
+    + base_name + "{3}.xml.bz2 --out-data-file results/" + base_name
+    + "{1}_{3}.xml.bz2").format(run, args.equilibrate, args.collisions,
+        args.collisions + args.equilibrate) for run in range(args.repeat) ]
 
 """
     Running the simulations in multiprocess parallel.
