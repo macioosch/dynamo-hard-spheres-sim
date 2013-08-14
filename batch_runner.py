@@ -7,7 +7,8 @@ from pprint import pprint
 
 def safe_runner(command):
     try:
-        system(command + "1>>std.out 2>>std.err")
+        system(command + " 1>>stdouterr/std.out.{0} 2>>stdouterr/std.err.{0}"
+                .format(getpid()))
     except:
         print("Oops! Command '{}' didn't work.".format(command))
     print("Command '{}' done by process {}.".format(command, getpid()))
@@ -29,6 +30,9 @@ parser.add_argument("-m", "--min_N_atoms", type=int, default=1372,
         "(default: 1372 = 4*7^3)")
 parser.add_argument("-p", "--packing", type=float, default=0.3,
         help="the packing fraction, density is p*6/pi (default: 0.3)")
+parser.add_argument("--processes", type=int, default=None,
+        help="number of processes (cores) to use (default: no. of processors"
+        "in the system)")
 parser.add_argument("-r", "--repeat", type=int, default=10,
         help="how many times each run should be repeated with random "
         "velocities for statistics (default: 10)")
@@ -51,7 +55,7 @@ start_configs = [ ("[ -f configs/" + base_name + "0.xml.bz2 ] || dynamod -m 0 "
 
 equilibrated_configs = [ ("[ -f configs/" + base_name + "{1}.xml.bz2 ] || "
     "dynarun configs/" + base_name + "0.xml.bz2 -c {1} -o configs/" + base_name
-    + "{1}.xml.bz2 -E --out-data-file /dev/null").format(run, args.equilibrate)
+    + "{1}.xml.bz2 --out-data-file /dev/null").format(run, args.equilibrate)
     for run in range(args.repeat) ]
 
 simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
@@ -63,8 +67,13 @@ simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
 """
     Running the simulations in multiprocess parallel.
 """
+system("rm stdouterr-old/*; mv stdouterr/* stdouterr-old/")
 
-pool = Pool()
+if args.processes is None:
+    pool = Pool()
+else:
+    pool = Pool(args.processes)
+
 pool.map(safe_runner, start_configs)
 pool.map(safe_runner, equilibrated_configs)
 pool.map(safe_runner, simulations)

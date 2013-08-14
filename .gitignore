@@ -42,5 +42,5 @@ nosetests.xml
 *.bz2
 
 # Other
-*.out
-*.err
+*.out*
+*.err*
