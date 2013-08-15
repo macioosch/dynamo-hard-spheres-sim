@@ -5,12 +5,8 @@ import datetime as dt
 import numpy as np
 import re
 
-def pressure(n_atoms, n_coll, delta_t):
-    # only when m = \sigma = \beta = \gamma(n_atoms) = 1.0
-    # const_var is a static variable
-    if "const_var" not in pressure.__dict__:
-        pressure.const_var = np.sqrt(np.pi) / (3*n_atoms)
-    return 1.0 + pressure.const_var * n_coll / delta_t
+# local imports
+from my_pressure import pressure
 
 status_regexp_time = " ([0-9]+:[0-9]+), ETA"
 status_regexp_h = " ([0-9]+)hr"
