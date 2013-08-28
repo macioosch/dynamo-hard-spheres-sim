@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
+from __future__ import division
+
 import argparse
 from math import ceil, pi
 from multiprocessing import Pool
@@ -40,7 +42,7 @@ parser.add_argument("-r", "--repeat", type=int, default=10,
 args = parser.parse_args()
 
 density = args.packing * 6/pi
-n_cells = ceil( (args.min_N_atoms/4)**(1/3) )
+n_cells = int(ceil( (args.min_N_atoms/4)**(1/3) ))
 n_atoms = 4*n_cells**3
 
 """
@@ -59,7 +61,7 @@ equilibrated_configs = [ ("[ -f configs/" + base_name + "{1}.xml.bz2 ] || "
     for run in range(args.repeat) ]
 
 simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
-    "dynarun configs/" + base_name + "{1}.xml.bz2 -c {2} -o configs/"
+    "dynarun -L MSD configs/" + base_name + "{1}.xml.bz2 -c {2} -o configs/"
     + base_name + "{3}.xml.bz2 --out-data-file results/" + base_name
     + "{1}_{3}.xml.bz2").format(run, args.equilibrate, args.collisions,
         args.collisions + args.equilibrate) for run in range(args.repeat) ]
