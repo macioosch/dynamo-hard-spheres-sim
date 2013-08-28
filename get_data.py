@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
+# local imports
+from my_pressure import pressure
+
 packings = []
 pressures = []
 #msds_val = []
@@ -42,11 +45,10 @@ for input_file in sorted(glob.glob("results/1098500_*.xml.bz2")):
     N_atoms.append(float(
         xmldoc.getElementsByTagName('ParticleCount')[0].attributes['val'].value))
 
-ZMD = 1.0 + np.sqrt(np.pi)*np.array(collisions) \
-        / (3*np.array(N_atoms)*np.array(times))
-P_mean = np.mean(ZMD)
-P_std = np.std(ZMD)
-print("P = {:.6f} +- {:.6f} ({:e})".format(P_mean, P_std, P_std/P_mean))
+pressures = pressure(np.array(N_atoms), np.array(collisions), np.array(times))
+mean_p = np.mean(pressures)
+std_p = np.std(pressures)
+print("Pressure: {:.6f} +- {:.6f} ({:.2e})".format(mean_p, std_p, std_p/mean_p))
 
 #pub_data = np.genfromtxt('published-values.csv', delimiter=' ')
 """
