@@ -3,13 +3,13 @@ from __future__ import division
 
 import argparse
 from math import ceil, pi
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from os import system, getpid
 from pprint import pprint
 
 def safe_runner(command):
     try:
-        system(command + " 1>>stdouterr/std.out.{0} 2>>stdouterr/std.err.{0}"
+        system(command + " 1>>log/std.out.{0} 2>>log/std.err.{0}"
                 .format(getpid()))
     except:
         print("Oops! Command '{}' didn't work.".format(command))
@@ -69,12 +69,12 @@ simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
 """
     Running the simulations in multiprocess parallel.
 """
-system("rm stdouterr-old/*; mv stdouterr/* stdouterr-old/")
+#system("rm log-old/*; mv log/* log-old/")
 
 if args.processes is None:
-    pool = Pool()
+    pool = Pool(min(cpu_count(), len(start_configs)))
 else:
-    pool = Pool(args.processes)
+    pool = Pool(min(cpu_count(), len(start_configs), args.processes))
 
 pool.map(safe_runner, start_configs)
 pool.map(safe_runner, equilibrated_configs)
