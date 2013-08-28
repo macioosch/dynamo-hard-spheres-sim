@@ -18,7 +18,7 @@ N_atoms = []
 
 result_name_regexp = "results/([0-9]+)_(0\.[0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\.xml\.bz2"
 
-for input_file in sorted(glob.glob("results/*.xml.bz2")):
+for input_file in sorted(glob.glob("results/1098500_*.xml.bz2")):
     """
     file_tmp_str = re.sub("results/", "", input_file)
     file_tmp_str = re.sub("\.xml\.bz2", "", file_tmp_str)
@@ -42,8 +42,11 @@ for input_file in sorted(glob.glob("results/*.xml.bz2")):
     N_atoms.append(float(
         xmldoc.getElementsByTagName('ParticleCount')[0].attributes['val'].value))
 
-ZMD = np.sqrt(np.pi)*np.array(collisions) / (3*np.array(N_atoms)*np.array(times))
-print(np.std(ZMD) / np.mean(ZMD))
+ZMD = 1.0 + np.sqrt(np.pi)*np.array(collisions) \
+        / (3*np.array(N_atoms)*np.array(times))
+P_mean = np.mean(ZMD)
+P_std = np.std(ZMD)
+print("P = {:.6f} +- {:.6f} ({:e})".format(P_mean, P_std, P_std/P_mean))
 
 #pub_data = np.genfromtxt('published-values.csv', delimiter=' ')
 """
