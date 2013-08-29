@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-from glob import glob
+#!/usr/bin/env python2
+from sys import argv, exit
 from subprocess import getoutput
 import datetime as dt
 import numpy as np
@@ -7,6 +7,10 @@ import re
 
 # local imports
 from my_pressure import pressure
+
+if len(argv) <= 1:
+    print("Provide std.out files as an argument.")
+    exit(1)
 
 status_regexp_time = " ([0-9]+:[0-9]+), ETA"
 status_regexp_h = " ([0-9]+)hr"
@@ -17,7 +21,7 @@ status_regexp_events = "Events ([0-9]+)k, t ([0-9\.]+), "
 statuses = []
 n_atoms = None
 
-for file_name in glob("stdouterr/std.out.*"):
+for file_name in argv[1:]:
     if n_atoms is None:
         with open(file_name, "r") as input_f:
             for line in input_f:
