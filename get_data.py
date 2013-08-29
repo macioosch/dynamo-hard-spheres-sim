@@ -45,7 +45,6 @@ for input_file in sorted(glob.glob("results/1098500_*.xml.bz2")):
     N_atoms.append(float(
         xmldoc.getElementsByTagName('ParticleCount')[0].attributes['val'].value))
 
-
 pressures = pressure(np.array(N_atoms), np.array(collisions), np.array(times))
 mean_p = np.mean(pressures)
 std_p = np.std(pressures)
