@@ -2,18 +2,19 @@
 from __future__ import division
 
 import argparse
+from functools import partial
 from math import ceil, pi
 from multiprocessing import Pool, cpu_count
 from os import system, getpid
 from pprint import pprint
 
-def safe_runner(command):
+def safe_runner(command, jid=None):
     try:
-        system(command + " 1>>log/std.out.{0} 2>>log/std.err.{0}"
-                .format(getpid()))
+        system(command + " 1>>log/std.out.{0}.{1} 2>>log/std.err.{0}.{1}"
+                .format(jid, getpid()))
+        print("Command '{}' done by process {}.".format(command, getpid()))
     except:
         print("Oops! Command '{}' didn't work.".format(command))
-    print("Command '{}' done by process {}.".format(command, getpid()))
 
 """
     Parsing command line agruments.
@@ -38,6 +39,8 @@ parser.add_argument("--processes", type=int, default=None,
 parser.add_argument("-r", "--repeat", type=int, default=10,
         help="how many times each run should be repeated with random "
         "velocities for statistics (default: 10)")
+parser.add_argument("--jid", default=None, nargs="?",
+        help="Job ID to distinguish log files")
 
 args = parser.parse_args()
 
@@ -76,6 +79,8 @@ if args.processes is None:
 else:
     pool = Pool(min(cpu_count(), len(start_configs), args.processes))
 
-pool.map(safe_runner, start_configs)
-pool.map(safe_runner, equilibrated_configs)
-pool.map(safe_runner, simulations)
+partial_safe_runner = partial(safe_runner, jid=args.jid)
+
+pool.map(partial_safe_runner, start_configs)
+pool.map(partial_safe_runner, equilibrated_configs)
+pool.map(partial_safe_runner, simulations)

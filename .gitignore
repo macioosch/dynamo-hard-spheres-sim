@@ -44,3 +44,10 @@ nosetests.xml
 # Other
 *.out*
 *.err*
+*-dynamo.*
+sha1_*.sum*
+
+# jobs folder
+jobs/*
+!jobs/job-start.sh
+!jobs/job-end.sh
