@@ -1,12 +1,23 @@
 #!/usr/bin/env python2
+from __future__ import division
+
+from math import sqrt
 from sys import argv, exit
-from subprocess import getoutput
+import subprocess
 import datetime as dt
-import numpy as np
 import re
 
 # local imports
 from my_pressure import pressure
+
+def my_mean(*args):
+    return sum(args)/len(args)
+
+def my_means_std(*args):
+    N = len(args)
+    mean_value = my_mean(args)
+    sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
+    return sqrt(sum_squares / (N*(N-1.0)))
 
 if len(argv) <= 1:
     print("Provide std.out files as an argument.")
@@ -30,8 +41,9 @@ for file_name in argv[1:]:
                     n_atoms = int(n_atoms.group(1))
                     break
 
-    pid = int(re.match("stdouterr/std\.out\.([0-9]+)", file_name).group(1))
-    status_line = getoutput("tail -n 1 " + file_name)
+    pid = int(re.search("std\.out\.([0-9]+).[0-9]+", file_name).group(1))
+    status_line, _ = subprocess.Popen(["tail","-n 1 " + file_name],
+            stdout=subprocess.PIPE).communicate()
 
     log_time = re.search(status_regexp_time, status_line).group(1)
     log_date = dt.datetime.strptime(log_time, "%H:%M")
@@ -58,8 +70,7 @@ for file_name in argv[1:]:
 for pid_status in sorted(statuses, key=lambda x: x[1]):
     print("Process {} will end around {}. Pressure: {}.".format(*pid_status[:3]))
 
-pressure_mean = np.mean([s[-1] for s in statuses])
-pressure_std = np.std([s[-1] for s in statuses])
+pressure_mean = my_mean([s[-1] for s in statuses])
+pressure_std = my_means_std([s[-1] for s in statuses])
 print("\n\tAverage pressure: {:.10f} +- {:.10f} ({:.2e}).".format(
     pressure_mean, pressure_std, pressure_std / pressure_mean))
-
