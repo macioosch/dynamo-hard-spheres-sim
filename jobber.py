@@ -1,10 +1,11 @@
-#!/usr/bin/env python2
-from __future__ import division
+#!/usr/bin/python2 -u
+from __future__ import division, print_function, unicode_literals
 
 import argparse
 from datetime import datetime
 from itertools import izip
-from os import system, mkdir
+from os import mkdir, system
+from time import sleep
 
 def my_linspace(x0, x1, xc):
     return [ x0 + (x1-x0) * i/(xc-1) for i in xrange(xc) ]
@@ -74,5 +75,11 @@ for command, file_name in izip(batch_runs, file_names):
 if not args.n:
     for file_name in file_names:
         system("qsub " + file_name)
+
+        sleep(1)
+        for i in range(14):
+            print('.', end='')
+            sleep(1)
+        print()
 else:
     print("Not submitting anything.")
