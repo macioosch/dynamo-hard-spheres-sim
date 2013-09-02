@@ -19,7 +19,7 @@ data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.ite
 #input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
 #        "results/1098500_*_219700000_1098500000.xml.bz2"))
 input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/*_*_219700000_1098500000.xml.bz2"))
+        "results/*_219700000_1098500000.xml.bz2"))
 print("Got {} files.".format(len(input_files)))
 
 for input_file in input_files:
@@ -74,15 +74,24 @@ plt.plot(data["packings"], [np.mean(i) for i in data["msds_diffusion"]], '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("Diffusion coefficient")
 """
-plt.figure(4)
+ax = plt.figure(4)
+plt.xscale("log")
 legend_names = []
-for packing in set(data["packings"]):
-    plt.plot([v for i,v in enumerate(data["n_atoms"]) if data["packings"][i] == packing ],
-            [np.mean(v) for i,v in enumerate(data["msds_diffusion"])
-                if data["packings"][i] == packing ], '-o')
-    legend_names.append(packing)
-plt.xlabel("Packing fraction")
+for packing in np.linspace(0.1, 0.9, 5) * np.pi/6:
+    ns = [ n for n, p in zip(data["n_atoms"], data["packings"])
+            if abs(p/packing - 1.0) < 1e-4 ]
+    ds = [ np.mean(d) for d, p in zip(data["msds_diffusion"], data["packings"])
+            if abs(p/packing - 1.0) < 1e-4 ]
+    er = [ np.std(d) for d, p in zip(data["msds_diffusion"], data["packings"])
+            if abs(p/packing - 1.0) < 1e-4 ]
+    if len(ns) > 1:
+        ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
+        plt.errorbar(1.0/ns, ds/ds[-1], fmt='o',
+                yerr=er / np.sqrt(len(er)) / ds[-1])
+        legend_names.append(packing)
+        #plt.title(packing)
+plt.xlabel("1/N")
 plt.ylabel("Diffusion coefficient")
-plt.legend(legend_names)
+plt.legend(legend_names, loc='lower left')
 
 plt.show()
