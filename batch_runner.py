@@ -1,17 +1,20 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
+from __future__ import division
+
 import argparse
+from functools import partial
 from math import ceil, pi
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 from os import system, getpid
 from pprint import pprint
 
-def safe_runner(command):
+def safe_runner(command, jid=None):
     try:
-        system(command + " 1>>stdouterr/std.out.{0} 2>>stdouterr/std.err.{0}"
-                .format(getpid()))
+        system(command + " 1>>log/std.out.{0}.{1} 2>>log/std.err.{0}.{1}"
+                .format(jid, getpid()))
+        print("Command '{}' done by process {}.".format(command, getpid()))
     except:
         print("Oops! Command '{}' didn't work.".format(command))
-    print("Command '{}' done by process {}.".format(command, getpid()))
 
 """
     Parsing command line agruments.
@@ -36,11 +39,13 @@ parser.add_argument("--processes", type=int, default=None,
 parser.add_argument("-r", "--repeat", type=int, default=10,
         help="how many times each run should be repeated with random "
         "velocities for statistics (default: 10)")
+parser.add_argument("--jid", default=None, nargs="?",
+        help="Job ID to distinguish log files")
 
 args = parser.parse_args()
 
 density = args.packing * 6/pi
-n_cells = ceil( (args.min_N_atoms/4)**(1/3) )
+n_cells = int(ceil( (args.min_N_atoms/4)**(1/3) ))
 n_atoms = 4*n_cells**3
 
 """
@@ -59,7 +64,7 @@ equilibrated_configs = [ ("[ -f configs/" + base_name + "{1}.xml.bz2 ] || "
     for run in range(args.repeat) ]
 
 simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
-    "dynarun configs/" + base_name + "{1}.xml.bz2 -c {2} -o configs/"
+    "dynarun -L MSD configs/" + base_name + "{1}.xml.bz2 -c {2} -o configs/"
     + base_name + "{3}.xml.bz2 --out-data-file results/" + base_name
     + "{1}_{3}.xml.bz2").format(run, args.equilibrate, args.collisions,
         args.collisions + args.equilibrate) for run in range(args.repeat) ]
@@ -67,13 +72,15 @@ simulations = [ ("[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || "
 """
     Running the simulations in multiprocess parallel.
 """
-system("rm stdouterr-old/*; mv stdouterr/* stdouterr-old/")
+#system("rm log-old/*; mv log/* log-old/")
 
 if args.processes is None:
-    pool = Pool()
+    pool = Pool(min(cpu_count(), len(start_configs)))
 else:
-    pool = Pool(args.processes)
+    pool = Pool(min(cpu_count(), len(start_configs), args.processes))
 
-pool.map(safe_runner, start_configs)
-pool.map(safe_runner, equilibrated_configs)
-pool.map(safe_runner, simulations)
+partial_safe_runner = partial(safe_runner, jid=args.jid)
+
+pool.map(partial_safe_runner, start_configs)
+pool.map(partial_safe_runner, equilibrated_configs)
+pool.map(partial_safe_runner, simulations)
