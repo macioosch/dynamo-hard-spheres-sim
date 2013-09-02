@@ -77,7 +77,7 @@ if not args.n:
         system("qsub " + file_name)
 
         sleep(1)
-        for i in range(14):
+        for i in range(29):
             print('.', end='')
             sleep(1)
         print()
