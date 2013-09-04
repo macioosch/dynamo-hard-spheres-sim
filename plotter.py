@@ -2,6 +2,7 @@
 # encoding=utf-8
 from __future__ import division, print_function, unicode_literals
 
+from uncertainties import numpy as unp, ufloat
 from xml.dom import minidom
 import bz2
 import glob
@@ -10,6 +11,11 @@ import numpy as np
 
 # local imports
 from my_pressure import my_pressure
+
+def derivative(x0, y0):
+    x1 = linspace( (x0[0]+x0[1])/2, (x0[-2]+x0[-1])/2, len(x0)-1 )
+    y1 = unp.diff(y0) / unp.diff(x0)
+    return x1, y1
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "collisions", "times"]
