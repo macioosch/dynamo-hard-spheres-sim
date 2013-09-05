@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # local imports
-from my_pressure import my_pressure
+from my_helper_functions import my_pressure
 
 def nufd(x):
     # D f = f'

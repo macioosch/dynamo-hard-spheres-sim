@@ -8,7 +8,7 @@ import datetime as dt
 import re
 
 # local imports
-from my_pressure import pressure
+from my_helper_functions import my_pressure
 
 def my_mean(*args):
     return sum(args)/len(args)

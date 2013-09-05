@@ -8,7 +8,7 @@ import numpy as np
 import re
 
 # local imports
-from my_pressure import pressure
+from my_helper_functions import my_pressure
 
 status_regexp_events = "Events ([0-9]+)k, t ([0-9\.]+), "
 

@@ -9,7 +9,7 @@ import csv
 import numpy as np
 
 # local imports
-from my_pressure import my_pressure
+from my_helper_functions import my_pressure
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
