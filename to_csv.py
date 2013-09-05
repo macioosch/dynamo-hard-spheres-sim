@@ -48,7 +48,7 @@ for input_file in argv[1:]:
 
 stdout_writer = csv.writer(stdout, delimiter=';')
 stdout.write("### Data format: packings;densities;collisions;n_atoms;"
-        "pressures_virial;pressures_collision;msds_val;msds_diffusion;times"
+        "pressures_virial;pressures_collision;msds_val;msds_diffusion;times;"
         "std:pressures_virial;std:pressures_collision;std:msds_val;"
         "std:msds_diffusion;std:times;\n")
 
