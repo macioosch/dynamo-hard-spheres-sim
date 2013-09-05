@@ -38,7 +38,7 @@ def uderivative(x0, y0):
     y1 = np.diff(y0) / np.diff(x0)
     return x1, y1
 
-def uplot(x, y, derivative=0, fmt='-o'):
+def uplot(x, y, derivative=0, fmt='.-'):
     for i in range(derivative):
         x, y = uderivative(x, y)
     yn = [ i.n for i in y ]
@@ -84,17 +84,24 @@ for input_file in input_files:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
+graphed_parameter = data["pressures_collision"]
 plt.figure(0)
-up = unp.uarray([np.mean(i) for i in data["pressures_collision"]],
-    [np.std(i)/np.sqrt(len(i)) for i in data["pressures_collision"]])
+up = unp.uarray([np.mean(i) for i in graphed_parameter],
+    [np.std(i)/np.sqrt(len(i)) for i in graphed_parameter])
+
+uplot(np.array(data["packings"]), up)
+plt.ylabel("Pressure p")
 
 DX = nufd(np.array(data["packings"])).toarray()
 
-#uplot(np.array(data["packings"]), up, 1)
 #uplot(np.array(data["packings"]), np.dot(DX, up))
-#uplot(np.array(data["packings"]), up, 2)
-uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
-#plt.legend(["simple", "matrix"])
+#plt.ylabel("First derivative of pressure: dp/dn")
+
+#uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
+#plt.ylabel("Second derivative of pressure: d2p/dn2")
+
+plt.xlabel("Packing fraction n")
+plt.xlim(0.275, 0.287)
 
 ## plot of standard deviations:
 #plt.plot(data["packings"], [np.std(i) / (np.sqrt(len(i))*np.mean(i))

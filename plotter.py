@@ -22,10 +22,10 @@ varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
 data = { i:[] for i in varying_parameters }
 data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.items())
 
-input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/1098500_*_219700000_1098500000.xml.bz2"))
 #input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-#        "results/*_219700000_1098500000.xml.bz2"))
+#        "results/1098500_*_219700000_1098500000.xml.bz2"))
+input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+        "results/*_219700000_1098500000.xml.bz2"))
 print("Got {} files.".format(len(input_files)))
 
 for input_file in input_files:
@@ -59,6 +59,7 @@ for input_file in input_files:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
+"""
 pub_data = np.genfromtxt('published-values.csv', delimiter=' ')
 
 plt.figure(1)
@@ -66,6 +67,7 @@ plt.plot(data["packings"], [np.mean(i) for i in data["pressures_collision"]], '-
         pub_data.T[0] * np.pi/6, pub_data.T[1], '.')
 plt.xlabel("Packing fraction")
 plt.ylabel("Pressure")
+"""
 """
 plt.figure(2)
 plt.semilogy(pub_data.T[0] * np.pi/6,
@@ -79,12 +81,11 @@ plt.plot(data["packings"], [np.mean(i) for i in data["msds_diffusion"]], '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("Diffusion coefficient")
 """
-"""
 ax = plt.figure(4)
-plt.xscale("log")
 graphed_parameter = "msds_diffusion"
 legend_names = []
-for packing in np.linspace(0.1, 0.9, 5) * np.pi/6:
+for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
+        [321, 322, 323, 324, 325]):
     ns = [ n for n, p in zip(data["n_atoms"], data["packings"])
             if abs(p/packing - 1.0) < 1e-4 ]
     ds = [ np.mean(d) for d, p in zip(data[graphed_parameter], data["packings"])
@@ -93,14 +94,19 @@ for packing in np.linspace(0.1, 0.9, 5) * np.pi/6:
             if abs(p/packing - 1.0) < 1e-4 ]
     if len(ns) > 1:
         ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
-        plt.errorbar(1.0/ns, ds/ds[-1], fmt='-o',
-                yerr=er / np.sqrt(len(er)) / ds[-1])
-        legend_names.append(packing)
-        #plt.title(packing)
-plt.xlabel("1/N")
-plt.ylabel("Diffusion coefficient relative to the \"precise\" value: "
-        "d(N) / d(N=1098500)")
-plt.legend(legend_names, loc='lower left')
-"""
+
+        plt.subplot(subplot)
+        plt.title("Packing fraction: {}".format(packing))
+        plt.ylabel("Diffusion coefficient")
+        if subplot in {324, 325}:
+            plt.xlabel("1/N")
+        plt.xscale("log")
+        plt.errorbar(1.0/ns, ds, fmt='.', yerr=er/np.sqrt(len(er)))
+        
+        #plt.errorbar(1.0/ns, ds/ds[-1], fmt='-o', yerr=er / np.sqrt(len(er)) / ds[-1])
+        #legend_names.append(packing)
+#plt.ylabel("Diffusion coefficient relative to the \"precise\" value: "
+#        "d(N) / d(N=1098500)")
+#plt.legend(legend_names, loc='lower left')
 
 plt.show()
