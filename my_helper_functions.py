@@ -29,9 +29,23 @@ def nufd(x):
     D = csr_matrix((val,(row,col)),shape=(n,n))
     return D
 
-def uderivative(x0, y0):
+def uderivative_simple(x0, y0):
     x1 = 0.5 * (x0[:-1] + x0[1:])
     y1 = np.diff(y0) / np.diff(x0)
+    return x1, y1
+
+def uderivative_oh4(x0, y0):
+    assert(len(x0) > 4)
+    x1 = x0[2:-2]
+    y1 = [ -y0[i+2] + 8*y0[i+1] - 8*y0[i-1] + y0[i-2]
+            for i in range(2, len(y0)-2) ] / (12*np.diff(x0[2:-1]))
+    return x1, y1
+
+def uderivative_2_oh4(x0, y0):
+    assert(len(x0) > 4)
+    x1 = x0[2:-2]
+    y1 = [ -y0[i+2] + 16*y0[i+1] - 30*y0[i] + 16*y0[i-1] - y0[i-2]
+            for i in range(2, len(y0)-2) ] / (12*np.diff(x0[2:-1])**2)
     return x1, y1
 
 def uplot(x, y, derivative=0, fmt='.-'):
