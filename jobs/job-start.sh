@@ -49,6 +49,7 @@ fi
 printf "\n Copy input files\n"
 sha1sum $PROG_01 $INPUT > sha1_input.sum.$JOB_ID
 cp -v $PROG_01 $INPUT sha1_input.sum.$JOB_ID $WORKDIR/
+rm sha1_input.sum.$JOB_ID
 
 cd $WORKDIR
 if [ $? -ne 0 ]

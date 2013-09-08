@@ -17,8 +17,8 @@ else
   rm -r $WORKDIR
 fi
 
+rm sha1_output.sum.$JOB_ID 
 mv *_*_*_*_*.xml.bz2 results/
 mv std.{out,err}.* mchudak-dynamo.{o,e}* log/
-rm sha1_*.sum.$JOB_ID
 
 exit 0
