@@ -9,7 +9,7 @@ import numpy as np
 import re
 
 # local imports
-from my_pressure import pressure
+from my_helper_functions import my_pressure
 
 packings = []
 pressures = []
