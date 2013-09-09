@@ -46,13 +46,15 @@ for input_file in argv[1:]:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
-stdout_writer = csv.writer(stdout, delimiter=';')
-stdout.write("### Data format: packings;densities;collisions;n_atoms;"
-        "pressures_virial;pressures_collision;msds_val;msds_diffusion;times;"
-        "std:pressures_virial;std:pressures_collision;std:msds_val;"
-        "std:msds_diffusion;std:times;\n")
+stdout_writer = csv.writer(stdout, delimiter='\t')
+stdout.write("### Data format: packings\tdensities\tcollisions\tn_atoms\t"
+        "pressures_virial\tpressures_collision\tmsds_val\tmsds_diffusion\ttimes\t"
+        "std:pressures_virial\tstd:pressures_collision\tstd:msds_val\t"
+        "std:msds_diffusion\tstd:times\n")
 
 for i in xrange(len(data["packings"])):
+    if data["msds_diffusion"][i][0] is None:
+        continue
     stdout_writer.writerow([
         data["packings"][i],
         data["packings"][i]*6.0/np.pi,

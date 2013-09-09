@@ -61,11 +61,17 @@ up = unp.uarray([np.mean(i) for i in graphed_parameter],
 
 DX = nufd(np.array(data["packings"])).toarray()
 
+#x1, p1 = uderivative_oh4(np.array(data["packings"]), up)
 #uplot(np.array(data["packings"]), np.dot(DX, up))
+#uplot(x1, p1)
 #plt.ylabel("First derivative of pressure: dp/dn")
+#plt.legend(["Array method", "O(h^4) method"])
 
+x2, p2 = uderivative_2_oh4(np.array(data["packings"]), up)
 uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
+uplot(x2, p2)
 plt.ylabel("Second derivative of pressure: d2p/dn2")
+plt.legend(["Array method", "O(h^4) method"])
 
 plt.xlabel("Packing fraction n")
 plt.xlim(0.275, 0.287)
