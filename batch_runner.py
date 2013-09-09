@@ -2,6 +2,8 @@
 from __future__ import division
 
 import argparse
+import calendar
+from datetime import datetime
 from functools import partial
 from math import ceil, pi
 from multiprocessing import Pool, cpu_count
@@ -52,7 +54,9 @@ n_atoms = 4*n_cells**3
     Strings that will be processed by shell in multiple threads.
 """
 
-base_name = "{}_{:0.12f}".format(n_atoms, args.packing) + "_{0:02d}_"
+utcnow = datetime.utcnow()
+microtimestamp = int(calendar.timegm(utcnow.utctimetuple())*1e6 + utcnow.microsecond)
+base_name = "{}_{:0.12f}_{}".format(n_atoms, args.packing, microtimestamp) + "_{0:02d}_"
 
 start_configs = [ ("[ -f configs/" + base_name + "0.xml.bz2 ] || dynamod -m 0 "
     "-C {1} -d {2} --i1 0 -r 1 -o configs/" + base_name + "0.xml.bz2")

@@ -21,6 +21,8 @@ parser = argparse.ArgumentParser(
         description="Create and submit multiple DynamO jobs.")
 parser.add_argument("-n", action='store_true',
         help="create jobs, but don't submit them")
+parser.add_argument("-q", action='store_true',
+        help="don't wait, submit immidiately")
 parser.add_argument("--log", dest='linspace', action='store_const',
         const=my_log_linspace, default=my_linspace,
         help="log scale: equal ratios of subsequent values")
@@ -76,10 +78,11 @@ if not args.n:
     for file_name in file_names:
         system("qsub " + file_name)
 
-        sleep(1)
-        for i in range(29):
-            print('.', end='')
+        if not args.q:
             sleep(1)
-        print()
+            for i in range(29):
+                print('.', end='')
+                sleep(1)
+            print()
 else:
     print("Not submitting anything.")

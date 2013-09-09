@@ -8,7 +8,7 @@ from xml.dom import minidom
 import bz2
 
 # local imports
-from my_helper_functions import my_pressure
+from my_helper_functions_bare import my_pressure
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
