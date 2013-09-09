@@ -1,27 +1,21 @@
 #!/usr/bin/env python2
 # encoding=utf-8
-from __future__ import division, print_function, unicode_literals
+from __future__ import division, print_function
 
-from uncertainties import unumpy as unp, ufloat
+from math import pi
+from sys import argv
 from xml.dom import minidom
 import bz2
-import glob
-import matplotlib.pyplot as plt
-import numpy as np
 
 # local imports
-from my_helper_functions import *
+from my_helper_functions import my_pressure
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
 data = { i:[] for i in varying_parameters }
 data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.items())
 
-input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/1098500_*_219700000_1098500000.xml.bz2"))
-print("Got {} files.".format(len(input_files)))
-
-for input_file in input_files:
+for input_file in argv[1:]:
     xmldoc = minidom.parse(bz2.BZ2File(input_file))
 
     packing = float(xmldoc.getElementsByTagName('PackingFraction')[0].attributes['val'].value)
@@ -45,39 +39,14 @@ for input_file in input_files:
     try:
         data["msds_val"][-1].append(float(
             xmldoc.getElementsByTagName('Species')[0].attributes['val'].value))
-        data["msds_diffusion"][-1].append(float(xmldoc.getElementsByTagName(
-            'Species')[0].attributes['diffusionCoeff'].value))
+        data["msds_diffusion"][-1].append(float(
+            xmldoc.getElementsByTagName('Species')[0].attributes['diffusionCoeff'].value))
     except:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
-graphed_parameter = data["pressures_collision"]
-plt.figure(0)
-up = unp.uarray([np.mean(i) for i in graphed_parameter],
-    [np.std(i)/np.sqrt(len(i)) for i in graphed_parameter])
-
-#uplot(np.array(data["packings"]), up)
-#plt.ylabel("Pressure p")
-
-DX = nufd(np.array(data["packings"])).toarray()
-
-#x1, p1 = uderivative_oh4(np.array(data["packings"]), up)
-#uplot(np.array(data["packings"]), np.dot(DX, up))
-#uplot(x1, p1)
-#plt.ylabel("First derivative of pressure: dp/dn")
-#plt.legend(["Array method", "O(h^4) method"])
-
-#x2, p2 = uderivative_2_oh4(np.array(data["packings"]), up)
-#uplot(x2, p2)
-uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
-plt.ylabel("Second derivative of pressure: d2p/dn2")
-#plt.legend(["Array method", "O(h^4) method"])
-
-plt.xlabel("Packing fraction n")
-plt.xlim(0.275, 0.287)
-
-## plot of standard deviations:
-#plt.plot(data["packings"], [np.std(i) / (np.sqrt(len(i))*np.mean(i))
-#    for i in data["pressures_collision"]], 'o')
-
-plt.show()
+for i in xrange(len(data["packings"])):
+    if data["msds_diffusion"][i][0] is None:
+        continue
+    print("d = {}:\t{} runs".format(data["packings"][i]*6.0/pi,
+            len(data["pressures_virial"][i])))

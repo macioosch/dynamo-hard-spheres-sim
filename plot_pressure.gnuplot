@@ -3,7 +3,7 @@ set terminal pdf enhanced color dashed
 
 system("rm fit.log")
 
-set datafile separator ";"
+set datafile separator "\t"
 file = "csv/uniform.csv"
 
 a1 = -1.64
