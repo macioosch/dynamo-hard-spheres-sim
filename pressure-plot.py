@@ -56,16 +56,16 @@ plt.figure(0)
 up = unp.uarray([np.mean(i) for i in graphed_parameter],
     [np.std(i)/np.sqrt(len(i)) for i in graphed_parameter])
 
-uplot(np.array(data["packings"]), up)
-plt.ylabel("Pressure p")
+#uplot(np.array(data["packings"]), up)
+#plt.ylabel("Pressure p")
 
 DX = nufd(np.array(data["packings"])).toarray()
 
 #uplot(np.array(data["packings"]), np.dot(DX, up))
 #plt.ylabel("First derivative of pressure: dp/dn")
 
-#uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
-#plt.ylabel("Second derivative of pressure: d2p/dn2")
+uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
+plt.ylabel("Second derivative of pressure: d2p/dn2")
 
 plt.xlabel("Packing fraction n")
 plt.xlim(0.275, 0.287)
