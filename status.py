@@ -8,16 +8,7 @@ import datetime as dt
 import re
 
 # local imports
-from my_helper_functions import my_pressure
-
-def my_mean(*args):
-    return sum(args)/len(args)
-
-def my_means_std(*args):
-    N = len(args)
-    mean_value = my_mean(args)
-    sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
-    return sqrt(sum_squares / (N*(N-1.0)))
+from my_helper_functions_bare import *
 
 if len(argv) <= 1:
     print("Provide std.out files as an argument.")

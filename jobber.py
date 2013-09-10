@@ -7,11 +7,8 @@ from itertools import izip
 from os import mkdir, system
 from time import sleep
 
-def my_linspace(x0, x1, xc):
-    return [ x0 + (x1-x0) * i/(xc-1) for i in xrange(xc) ]
-
-def my_log_linspace(x0, x1, xc):
-    return [ x0 * (x1/x0)**(i/(xc-1)) for i in xrange(xc) ]
+# local imports
+from my_helper_functions_bare import *
 
 """
     Parsing command line agruments.
