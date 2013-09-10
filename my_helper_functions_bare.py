@@ -12,12 +12,16 @@ def my_mean(args):
 
 def my_means_std(args):
     N = len(args)
+    if N <= 1:
+        return 0.0
     mean_value = my_mean(args)
     sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
     return sqrt(sum_squares / (N*(N-1.0)))
 
 def my_std(args):
     N = len(args)
+    if N <= 1:
+        return 0.0
     mean_value = my_mean(args)
     sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
     return sqrt(sum_squares / (N-1.0))

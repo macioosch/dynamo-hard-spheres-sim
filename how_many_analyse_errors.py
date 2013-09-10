@@ -22,5 +22,5 @@ for match in matches:
 for r, s in runs.iteritems():
     mean = my_mean(s)
     err = my_std(s)
-    print("For {:2d} runs the relative error *1e6 is {:6.3f} +/- {:5.3f} "
-        "({:6.3f} ..{:6.3f})".format(r, mean, err, mean-err, mean+err))
+    print("For {:2d} runs ({:2d} points) the relative error *1e6 is {:6.3f} +/- {:5.3f} "
+        "({:6.3f} ..{:6.3f})".format(r, len(s), mean, err, mean-err, mean+err))
