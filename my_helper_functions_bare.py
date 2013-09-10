@@ -16,6 +16,12 @@ def my_means_std(args):
     sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
     return sqrt(sum_squares / (N*(N-1.0)))
 
+def my_std(args):
+    N = len(args)
+    mean_value = my_mean(args)
+    sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
+    return sqrt(sum_squares / (N-1.0))
+
 def my_pressure(n_atoms, n_coll, delta_t):
     # only when m = \sigma = \beta = \gamma(n_atoms) = 1.0
     # const_var is a static variable
