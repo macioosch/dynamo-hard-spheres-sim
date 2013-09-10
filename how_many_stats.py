@@ -8,7 +8,7 @@ from xml.dom import minidom
 import bz2
 
 # local imports
-from my_helper_functions_bare import my_pressure
+from my_helper_functions_bare import *
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
@@ -45,8 +45,11 @@ for input_file in argv[1:]:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
+param="pressures_collision"
+
 for i in xrange(len(data["packings"])):
     if data["msds_diffusion"][i][0] is None:
         continue
-    print("d = {}:\t{} runs".format(data["packings"][i]*6.0/pi,
-            len(data["pressures_virial"][i])))
+    print("d = {:.6f}:\t{:2d} runs,\trelative error*1e6: {:9.6f}".format(
+        data["packings"][i]*6.0/pi, len(data[param][i]),
+        1e6 * my_means_std(data[param][i]) / my_mean(data[param][i])))

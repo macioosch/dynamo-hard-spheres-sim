@@ -7,10 +7,10 @@ def my_linspace(x0, x1, xc):
 def my_log_linspace(x0, x1, xc):
     return [ x0 * (x1/x0)**(i/(xc-1)) for i in xrange(xc) ]
 
-def my_mean(*args):
+def my_mean(args):
     return sum(args)/len(args)
 
-def my_means_std(*args):
+def my_means_std(args):
     N = len(args)
     mean_value = my_mean(args)
     sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
