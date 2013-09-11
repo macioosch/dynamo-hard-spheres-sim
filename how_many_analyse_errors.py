@@ -19,7 +19,7 @@ for match in matches:
         runs[r] = []
     runs[r].append(float(match[1]))
 
-for r, s in runs.iteritems():
+for r, s in sorted(runs.iteritems(), key=lambda x: x[0]):
     mean = my_mean(s)
     err = my_std(s)
     print("For {:2d} runs ({:2d} points) the relative error *1e6 is {:6.3f} +/- {:5.3f} "
