@@ -11,6 +11,9 @@ import numpy as np
 # local imports
 from my_helper_functions import my_pressure
 
+def np_std_mean(arg):
+    return np.std(arg)/np.sqrt(len(arg))
+
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
 data = { i:[] for i in varying_parameters }
@@ -65,9 +68,9 @@ for i in xrange(len(data["packings"])):
         np.mean(data["msds_val"][i]),
         np.mean(data["msds_diffusion"][i]),
         np.mean(data["times"][i]),
-        np.std(data["pressures_virial"][i]),
-        np.std(data["pressures_collision"][i]),
-        np.std(data["msds_val"][i]),
-        np.std(data["msds_diffusion"][i]),
-        np.std(data["times"][i])
+        np_std_mean(data["pressures_virial"][i]),
+        np_std_mean(data["pressures_collision"][i]),
+        np_std_mean(data["msds_val"][i]),
+        np_std_mean(data["msds_diffusion"][i]),
+        np_std_mean(data["times"][i])
         ])
