@@ -32,11 +32,12 @@ plot y2(x) - y1(x) lc rgb "#777777",\
     file u 1:($6 - y1($1)):11 w yerrorbars ls 1
 
 set output "plots/quadratic.pdf"
+set ylabel "Relative pressure difference {/Symbol D}p / p / 10^{–6}"
 set title sprintf("Differential plot of a quadratic fit: p = %.2f n^2 %+.2f n %+.2f", c2, b2, a2)
-set format y "%.5f"
+set format y "%.1f"
 set ytics auto
 set autoscale y
-plot file u 1:($6 - y2($1)):11 w yerrorbars
+plot file u 1:( 1e6*($6-y2($1))/$6 ):( 1e6*$11/$6 ) w yerrorbars
 
 set key bottom right
 
