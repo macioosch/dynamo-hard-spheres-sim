@@ -2,17 +2,14 @@
 # encoding=utf-8
 from __future__ import division, print_function
 
+from math import pi
 from sys import argv, stdout
 from xml.dom import minidom
 import bz2
 import csv
-import numpy as np
 
 # local imports
-from my_helper_functions import my_pressure
-
-def np_std_mean(arg):
-    return np.std(arg)/np.sqrt(len(arg))
+from my_helper_functions_bare import *
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
@@ -60,17 +57,17 @@ for i in xrange(len(data["packings"])):
         continue
     stdout_writer.writerow([
         data["packings"][i],
-        data["packings"][i]*6.0/np.pi,
+        data["packings"][i]*6.0/pi,
         data["collisions"][i],
         data["n_atoms"][i],
-        np.mean(data["pressures_virial"][i]),
-        np.mean(data["pressures_collision"][i]),
-        np.mean(data["msds_val"][i]),
-        np.mean(data["msds_diffusion"][i]),
-        np.mean(data["times"][i]),
-        np_std_mean(data["pressures_virial"][i]),
-        np_std_mean(data["pressures_collision"][i]),
-        np_std_mean(data["msds_val"][i]),
-        np_std_mean(data["msds_diffusion"][i]),
-        np_std_mean(data["times"][i])
+        my_mean(data["pressures_virial"][i]),
+        my_mean(data["pressures_collision"][i]),
+        my_mean(data["msds_val"][i]),
+        my_mean(data["msds_diffusion"][i]),
+        my_mean(data["times"][i]),
+        my_means_std(data["pressures_virial"][i]),
+        my_means_std(data["pressures_collision"][i]),
+        my_means_std(data["msds_val"][i]),
+        my_means_std(data["msds_diffusion"][i]),
+        my_means_std(data["times"][i])
         ])
