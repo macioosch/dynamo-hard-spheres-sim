@@ -1,7 +1,7 @@
 #!/usr/bin/gnuplot
 set terminal pdf enhanced color dashed
 
-system("rm fit.log")
+system("[ -f fit.log ] && rm fit.log")
 
 set datafile separator "\t"
 file = "csv/uniform.csv"

@@ -15,4 +15,4 @@ fi
 
 tail -n +15 $OUTPUT | head -n 25 > csv/uniform.csv
 
-./plot_pressure.gnuplot
+#./plot_pressure.gnuplot
