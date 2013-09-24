@@ -14,15 +14,15 @@ from my_helper_functions_bare import *
 density = float(argv[1])
 packing = density * pi/6
 
-## Proper simulation:
-#min_n_atoms = 5e5
-#total_collisions = int(1e4 * n_atoms)
-#n_periods = 200
+# Proper simulation:
+min_n_atoms = 5e5
+collisions_per_atom = 1e4
+n_periods = 200
 
-# Test:
-min_n_atoms = 5e3
-collisions_per_atom = 2e3
-n_periods = 20
+## Test:
+#min_n_atoms = 5e3
+#collisions_per_atom = 2e3
+#n_periods = 20
 
 run = 0
 
