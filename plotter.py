@@ -20,7 +20,9 @@ data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.ite
 #input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
 #        "results/1098500_*_219700000_1098500000.xml.bz2"))
 input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/*_219700000_1098500000.xml.bz2"))
+        "results/*_219700000_1098500000.xml.bz2") +
+        glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+        "results/*_2097152000_6291456000.xml.bz2"))
 print("Got {} files.".format(len(input_files)))
 
 for input_file in input_files:
@@ -54,19 +56,19 @@ for input_file in input_files:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
+"""
 d = (6/np.pi) * np.array([np.mean(i) for i in data["packings"]])
 Z = np.array([np.mean(i) for i in data["pressures_collision"]])
 P = np.array([np.mean(i) for i in data["pressures_virial"]])
 plt.figure(1)
 
-plt.plot((Z-1)/(P/d-1), 'o')
+#plt.plot((Z)/(P/d), 'o')
 
-#plt.plot(data["packings"], Z, 'o')
-#plt.plot(data["packings"], P/d, 'o')
-#plt.xlabel("Packing fraction")
-#plt.ylabel("Pressure")
-#plt.legend(["Z","P"])
-
+plt.plot(data["packings"], Z/(P/d)-1, 'o')
+plt.xlabel("Packing fraction")
+plt.ylabel("Pressure")
+plt.legend(["Z","P"])
+"""
 """
 pub_data = np.genfromtxt('published-values.csv', delimiter=' ')
 
@@ -88,7 +90,6 @@ plt.figure(3)
 plt.plot(data["packings"], [np.mean(i) for i in data["msds_diffusion"]], '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("Diffusion coefficient")
-"""
 """
 ax = plt.figure(4)
 graphed_parameter = "msds_diffusion"
@@ -117,6 +118,5 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
 #plt.ylabel("Diffusion coefficient relative to the \"precise\" value: "
 #        "d(N) / d(N=1098500)")
 #plt.legend(legend_names, loc='lower left')
-"""
 
 plt.show()
