@@ -32,7 +32,7 @@ TMPDIRS="configs results log"
 
 #input
 PROG_01="convergence.py"
-INPUT=""
+INPUT="my_helper_functions_bare.py"
 
 #output
 OUTPUT="results/* log/*"
