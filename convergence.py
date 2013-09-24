@@ -11,8 +11,8 @@ import calendar
 # local imports
 from my_helper_functions_bare import *
 
-packing = float(argv[1])
-density = packing * 6/pi
+density = float(argv[1])
+packing = density * pi/6
 
 min_n_atoms = 5e3
 n_cells = int(ceil( (min_n_atoms/4)**(1/3) ))
