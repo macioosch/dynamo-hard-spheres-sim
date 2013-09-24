@@ -63,7 +63,8 @@ for command, file_name in izip(batch_runs, file_names):
     with open(file_name,"w+") as f_out:
         with open("jobs/job-start.sh","r") as f_beginning:
             f_out.write(f_beginning.read())
-        f_out.write("echo Job $JOB_ID is executed on $HOSTNAME, command: " + command)
+        f_out.write("echo \"Job $JOB_ID is executed on $HOSTNAME, command: "
+                + command + "\"")
         f_out.write(command)
         with open("jobs/job-end.sh","r") as f_end:
             f_out.write(f_end.read())
