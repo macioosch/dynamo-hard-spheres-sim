@@ -46,7 +46,7 @@ else:
     args.pp = "--" + args.pp
 
 base_name = "./batch_runner.py {} --jid $JOB_ID {}".format(args.args, args.pp) \
-        + " {0} 1>runner-{1:03d}.out 2>runner-{1:03d}.err\n"
+        + " {0} 1>runner-{1:03d}.out 2>runner-{1:03d}.err"
 
 batch_runs = [ base_name.format(args.round(p), i)
         for i, p in enumerate(args.linspace(args.p0, args.p1, args.pn)) ]
@@ -64,8 +64,8 @@ for command, file_name in izip(batch_runs, file_names):
         with open("jobs/job-start.sh","r") as f_beginning:
             f_out.write(f_beginning.read())
         f_out.write("echo \"Job $JOB_ID is executed on $HOSTNAME, command: "
-                + command + "\"")
-        f_out.write(command)
+                + command + "\"\n")
+        f_out.write(command + "\n")
         with open("jobs/job-end.sh","r") as f_end:
             f_out.write(f_end.read())
 
