@@ -5,6 +5,7 @@ from __future__ import division, print_function, unicode_literals
 from uncertainties import unumpy as unp, ufloat
 from xml.dom import minidom
 import bz2
+import csv
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
@@ -65,14 +66,14 @@ DX = nufd(np.array(data["packings"])).toarray()
 #x1, p1 = uderivative_oh4(np.array(data["packings"]), up)
 #uplot(x1, p1)
 #plt.legend(["O(h^4) method", "Array method"])
-#uplot(np.array(data["packings"]), np.dot(DX, up))
-#plt.ylabel("First derivative of pressure: dp/dn")
+uplot(np.array(data["packings"]), np.dot(DX, up))
+plt.ylabel("First derivative of pressure: dp/dn")
 
 #x2, p2 = uderivative_2_oh4(np.array(data["packings"]), up)
 #uplot(x2, p2)
 #plt.legend(["O(h^4) method", "Array method"])
-uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
-plt.ylabel("Second derivative of pressure: d2p/dn2")
+#uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
+#plt.ylabel("Second derivative of pressure: d2p/dn2")
 
 plt.xlabel("Packing fraction n")
 plt.xlim(0.275, 0.287)

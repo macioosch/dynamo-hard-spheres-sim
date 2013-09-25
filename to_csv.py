@@ -20,13 +20,13 @@ for input_file in argv[1:]:
     xmldoc = minidom.parse(bz2.BZ2File(input_file))
 
     packing = float(xmldoc.getElementsByTagName('PackingFraction')[0].attributes['val'].value)
-    n_atoms = float(xmldoc.getElementsByTagName('ParticleCount')[0].attributes['val'].value)
+    n_atoms = int(xmldoc.getElementsByTagName('ParticleCount')[0].attributes['val'].value)
 
     if len(data["packings"]) == 0 or packing != data["packings"][-1] \
             or n_atoms != data["n_atoms"][-1]:
         data["packings"].append(packing)
         data["n_atoms"].append(n_atoms)
-        data["collisions"].append(float(xmldoc.getElementsByTagName(
+        data["collisions"].append(int(xmldoc.getElementsByTagName(
                 'Duration')[0].attributes['TwoParticleEvents'].value))
         for parameter in varying_parameters:
             data[parameter].append([])

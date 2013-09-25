@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FILES='results/*_219700000_1098500000.xml.bz2'
+FILES='results/*_{219700000_1098500000,2097152000_6291456000}.xml.bz2'
 OUTPUT='csv/D-vs-N-new.csv'
 #FILES='results/1098500_*_219700000_1098500000.xml.bz2'
 #OUTPUT='csv/1098500_219700000_1098500000.csv'
@@ -15,6 +15,6 @@ else
     exit 1
 fi
 
-tail -n +15 $OUTPUT | head -n 25 > csv/uniform.csv
+#tail -n +15 $OUTPUT | head -n 25 > csv/uniform.csv
 
 #./plot_pressure.gnuplot
