@@ -35,7 +35,7 @@ for file_name in input_files:
 plt.figure(0)
 plt.hold(True)
 
-for packing, file_names in sorted(packings.iteritems()):
+for packing, file_names in sorted(packings.iteritems(), reverse=True):
     parameter = []
     parameter_std = []
     parameter_means_std = []
@@ -70,8 +70,11 @@ for packing, file_names in sorted(packings.iteritems()):
         if len(file_names) == 0:
             break
 
-    plt.errorbar(collisions, parameter/parameter[-1],
-            yerr=parameter_means_std/parameter[-1])
+    plt.errorbar(collisions, parameter, yerr=parameter_means_std)
+#    plt.errorbar(collisions, parameter/parameter[-1],
+#            yerr=parameter_means_std/parameter[-1])
+    
+    break
 
 plt.legend(sorted(packings.keys()), loc="lower right")
 plt.show()
