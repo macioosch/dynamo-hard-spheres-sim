@@ -2,12 +2,22 @@ from matplotlib import pyplot as plt
 from scipy.sparse import csr_matrix
 import numpy as np
 
+def my_means_std(args):
+    N = len(args)
+    if N <= 1:
+        return 0.0
+    return np.std(args) / np.sqrt(N)
+
 def my_pressure(n_atoms, n_coll, delta_t):
     # only when m = \sigma = \beta = \gamma(n_atoms) = 1.0
     # const_var is a static variable
     if "const_var" not in my_pressure.__dict__:
         my_pressure.const_var = np.sqrt(np.pi) / 3
     return 1.0 + my_pressure.const_var * n_coll / (n_atoms * delta_t)
+
+def xml_get_float(parsed_xml, param_tuple):
+    return float(parsed_xml.getElementsByTagName(
+        param_tuple[0])[0].attributes[param_tuple[1]].value)
 
 def nufd(x):
     # D f = f'
