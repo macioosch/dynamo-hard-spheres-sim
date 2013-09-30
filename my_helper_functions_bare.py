@@ -2,7 +2,10 @@ from __future__ import division
 from math import pi, sqrt
 
 def my_linspace(x0, x1, xc):
-    return [ x0 + (x1-x0) * i/(xc-1) for i in xrange(xc) ]
+    if x0 == x1 or xc <= 1:
+        return [ (x0+x1)/2.0 ]
+    else:
+        return [ x0 + (x1-x0) * i/(xc-1) for i in xrange(xc) ]
 
 def my_log_linspace(x0, x1, xc):
     return [ x0 * (x1/x0)**(i/(xc-1)) for i in xrange(xc) ]
