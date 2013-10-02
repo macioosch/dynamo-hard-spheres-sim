@@ -9,8 +9,9 @@ from functools import partial
 from glob import glob
 from math import ceil, pi
 from multiprocessing import Pool, cpu_count
-from os import rename, system, getpid
+from os import remove, rename, system, getpid
 from pprint import pprint
+from random import randint
 
 def safe_runner(command, jid=None):
     try:
@@ -21,12 +22,14 @@ def safe_runner(command, jid=None):
         print("Oops! Command '{}' didn't work.".format(command))
 
 def move_peeks(base_name, collisions, period):
-    for snapshot in glob("Snapshot.*.xml.bz2"):
-        number = 1 + int(re.match("Snapshot\.([0-9]+)e?\.xml\.bz2",
+    for snapshot in glob("Snapshot.output.*.xml.bz2"):
+        number = 1 + int(re.match("Snapshot\.output\.([0-9]+)e?\.xml\.bz2",
                 snapshot).group(1))
-        new_name = "peeks/" + base_name.format(0) + "_{}_{}.xml.bz2".format(
-                collisions, number*period)
+        new_name = "peeks/" + base_name.format(0) + "{}_{}.xml.bz2".format(
+                collisions, collisions + number*period)
         rename(snapshot, new_name)
+    for unneded_config in glob("Snapshot.*.xml.bz2"):
+        remove(unneded_config)
 
 """
     Parsing command line agruments.
@@ -70,7 +73,7 @@ n_atoms = 4*n_cells**3
 """
 
 utcnow = datetime.utcnow()
-flavour = str(calendar.timegm(utcnow.utctimetuple())*1e6 + utcnow.microsecond)
+flavour = str(int(calendar.timegm(utcnow.utctimetuple())*1e6 + utcnow.microsecond))
 flavour += "{:06d}".format(randint(0, 999999))
 base_name = "{}_{:0.12f}_{}".format(n_atoms, args.packing, flavour) + "_{0:02d}_"
 
@@ -80,7 +83,7 @@ start_configs = [ ("[ -f configs/" + base_name + "0.xml.bz2 ] || dynamod -m 0 "
 
 equilibrated_configs_string = "[ -f configs/" + base_name + "{1}.xml.bz2 ] || " \
     "dynarun configs/" + base_name + "0.xml.bz2 -c {1} -o configs/" + base_name \
-    + "{1}.xml.bz2 --out-data-file peeks/" + base_name + "_0_{1}.xml.bz2"
+    + "{1}.xml.bz2 --out-data-file peeks/" + base_name + "0_{1}.xml.bz2"
 
 simulations_string = "[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || " \
     "dynarun -L MSD configs/" + base_name + "{1}.xml.bz2 -c {2} -o configs/" \
@@ -88,8 +91,8 @@ simulations_string = "[ -f results/" + base_name + "{1}_{3}.xml.bz2 ] || " \
     + "{1}_{3}.xml.bz2"
 
 if args.peek:
-    for s in [simulations_string, equilibrated_configs_string]:
-        s += "--snapshot-events {}".format(args.peek)
+    simulations_string += " --snapshot-events {}".format(args.peek)
+    equilibrated_configs_string += " --snapshot-events {}".format(args.peek)
 
 equilibrated_configs = [ equilibrated_configs_string.format(run, args.equilibrate)
     for run in range(args.repeat) ]
