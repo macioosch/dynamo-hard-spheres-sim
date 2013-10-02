@@ -21,21 +21,21 @@
 date
 echo " Job running on: $HOSTNAME"
 
-export PATH=/opt/DynamO/bin:$PATH
-export LD_LIBRARY_PATH=/opt/DynamO/lib:$LD_LIBRARY_PATH
+export PATH=/opt/DynamO.20131002/bin:$PATH
+export LD_LIBRARY_PATH=/opt/DynamO.20131002/lib:$LD_LIBRARY_PATH
 
 SRC_DIR=`pwd`
 TMP_PATH="/scratch"
 NODE_WORKDIR_NAME="`printf "%s_ID-%08d_R%08d" $USER $JOB_ID $RANDOM`"
 WORKDIR="$TMP_PATH/$NODE_WORKDIR_NAME"
-TMPDIRS="configs results log"
+TMPDIRS="configs results log peeks"
 
 #input
 PROG_01="batch_runner.py"
 INPUT=""
 
 #output
-OUTPUT="results/* log/*"
+OUTPUT="results/* log/* peeks/*"
 
 # Tworzenie katalogu tymczasowego na wezle
 # if [ ! -d $TMP_PATH/$NODE_WORKDIR_NAME ]
