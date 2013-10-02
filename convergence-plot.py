@@ -21,8 +21,8 @@ researched_tuple = diffusion_tuple
 #researched_tuple = pressure_tuple
 
 input_files = glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-#        "results/500000_*_00_0_83333333.xml.bz2")
-        "results/500000_*_00_0_25000000.xml.bz2")
+        "results/500000_*_00_0_83333333.xml.bz2")
+        #"results/500000_*_00_0_25000000.xml.bz2")
 
 packings = dict()
 for file_name in input_files:
@@ -35,7 +35,7 @@ for file_name in input_files:
 plt.figure(0)
 plt.hold(True)
 
-for packing, file_names in sorted(packings.iteritems(), reverse=True):
+for packing, file_names in sorted(packings.iteritems()):
     parameter = []
     parameter_std = []
     parameter_means_std = []
@@ -75,5 +75,8 @@ for packing, file_names in sorted(packings.iteritems(), reverse=True):
 #            yerr=parameter_means_std/parameter[-1])
 
 
-plt.legend(sorted(packings.keys()), loc="lower right")
+plt.legend(sorted(packings.keys()), loc="lower right", title=u"Współczynnik pakowania:")
+plt.xlabel(u"Kolizje")
+plt.ylabel(u"Chwilowy współczynnik samodyfuzji D")
+
 plt.show()

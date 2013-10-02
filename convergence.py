@@ -34,10 +34,9 @@ collision_checkpoints = [ int(round(i)) for i in my_linspace(0,
         total_collisions, n_periods+1) ]
 
 utcnow = datetime.utcnow()
-microtimestamp = int(calendar.timegm(utcnow.utctimetuple())*1e6 + utcnow.microsecond)
-random_flavour = int(999999 * random())
-base_name = "{}_{:0.12f}_{}{:06d}".format(n_atoms, packing, microtimestamp,
-        random_flavour) + "_{0:02d}_"
+flavour = str(calendar.timegm(utcnow.utctimetuple())*1e6 + utcnow.microsecond)
+flavour += "{:06d}".format(randint(0, 999999))
+base_name = "{}_{:0.12f}_{}".format(n_atoms, packing, flavour) + "_{0:02d}_"
 
 system(("[ -f configs/" + base_name + "0.xml ] || dynamod -m 0 "
         "-C {1} -d {2} --i1 0 -r 1 -o configs/" + base_name + "0.xml").format(
