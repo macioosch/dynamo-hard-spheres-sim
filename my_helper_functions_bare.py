@@ -1,6 +1,10 @@
 from __future__ import division
 from math import pi, sqrt
 
+def xml_get_float(parsed_xml, param_tuple):
+    return float(parsed_xml.getElementsByTagName(
+        param_tuple[0])[0].attributes[param_tuple[1]].value)
+
 def my_linspace(x0, x1, xc):
     if x0 == x1 or xc <= 1:
         return [ (x0+x1)/2.0 ]

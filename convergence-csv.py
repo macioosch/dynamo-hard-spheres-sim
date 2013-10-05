@@ -1,79 +1,86 @@
 #!/usr/bin/env python2
 # encoding=utf-8
-from __future__ import division, print_function, unicode_literals
+from __future__ import division, print_function
 
+from glob import glob
+from math import pi
 from pprint import pprint
+from sys import stdout
 from xml.dom import minidom
 import bz2
 import csv
-import glob
 import matplotlib.pyplot as plt
-import numpy as np
 import re
 
 # local imports
-from my_helper_functions import *
+from my_helper_functions_bare import *
 
+# deterministic parameters:
+collisions_tuple = ('Duration','TwoParticleEvents')
+n_atoms_tuple = ('ParticleCount','val')
+packing_tuple = ('PackingFraction','val')
+# random parameters:
 diffusion_tuple = ('Species','diffusionCoeff')
+msds_tuple = ('Species','val')
 pressure_tuple = ('Pressure','Avg')
+time_tuple = ('Duration','Time')
 
-researched_tuple = diffusion_tuple
-#researched_tuple = pressure_tuple
+equilibration = 219700000
 
-input_files = glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-#        "results/500000_*_00_0_83333333.xml.bz2")
-        "results/500000_*_00_0_25000000.xml.bz2")
+input_files = glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+        "results/500000_*_*_00_{}_*.xml.bz2".format(equilibration))
+print("Got {} files.".format(len(input_files)))
 
-packings = dict()
+data_files = dict()
 for file_name in input_files:
-    packing = re.search("/500000_([0-9\.]+)_[0-9]+_00_0_[0-9]+\.xml\.bz2$",
-            file_name).group(1)
-    if packing not in packings:
-        packings[packing] = []
-    packings[packing].append(file_name)
+    packing, collisions = re.search(
+            "/500000_([0-9\.]+)_[0-9]+_00_[0-9]+_([0-9]+)\.xml\.bz2$",
+            file_name).groups()
+    if packing not in data_files:
+        data_files[packing] = dict()
+    if collisions not in data_files[packing]:
+        data_files[packing][collisions] = []
+    data_files[packing][collisions].append(file_name)
 
-plt.figure(0)
-plt.hold(True)
+stdout_writer = csv.writer(stdout, delimiter='\t')
+stdout.write("### Data format: packings\tdensities\tcollisions\tn_atoms\t"
+        "pressures_virial\tpressures_collision\tmsds_val\tmsds_diffusion\ttimes\t"
+        "std:pressures_virial\tstd:pressures_collision\tstd:msds_val\t"
+        "std:msds_diffusion\tstd:times\n")
 
-for packing, file_names in sorted(packings.iteritems(), reverse=True):
-    parameter = []
-    parameter_std = []
-    parameter_means_std = []
-    collisions = []
+for packing, collisions_data in sorted(data_files.iteritems()):
+    for collisions, file_names in sorted(data_files[packing].iteritems()):
 
-    while True:
-        collisions.append(int(re.search(
-                "/500000_[0-9\.]+_[0-9]+_00_[0-9]+_([0-9]+)\.xml\.bz2$",
-                file_names[0]).group(1)))
+        diffusion, msds, pressure, time = [], [], [], []
+        n_atoms = None
 
-        parameter_values = []
         for file_name in file_names:
             xmldoc = minidom.parse(bz2.BZ2File(file_name))
-            parameter_values.append(xml_get_float(xmldoc, researched_tuple))
-                
-        parameter.append(np.mean(parameter_values))
-        parameter_std.append(np.std(parameter_values))
-        parameter_means_std.append(my_means_std(parameter_values))
 
-        print("Packing {}, collisions processed: {}.".format(packing,
-            collisions[-1]))
+            if n_atoms is None:
+                n_atoms = int(xml_get_float(xmldoc, n_atoms_tuple))
 
-        # check if there are more files in the series
-        more_files = glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-                "results/500000_{}_*_00_{}_*.xml.bz2".format(packing,
-                    collisions[-1]))
+            diffusion.append(xml_get_float(xmldoc, diffusion_tuple))
+            msds.append(xml_get_float(xmldoc, msds_tuple))
+            pressure.append(xml_get_float(xmldoc, pressure_tuple))
+            time.append(xml_get_float(xmldoc, time_tuple))
 
-        file_names = [ file_name  for file_name in more_files if abs(int(re.search(
-                "/500000_[0-9\.]+_[0-9]+_00_[0-9]+_([0-9]+)\.xml\.bz2$",
-                file_name).group(1)) - collisions[-1] - collisions[0]) <= 1 ]
-
-        if len(file_names) == 0:
-            break
-
-    plt.errorbar(collisions, parameter, yerr=parameter_means_std)
-#    plt.errorbar(collisions, parameter/parameter[-1],
-#            yerr=parameter_means_std/parameter[-1])
-
-
-plt.legend(sorted(packings.keys()), loc="lower right")
-plt.show()
+        pressure_collisions = [
+                my_pressure(n_atoms, int(collisions), t) for t in time ]
+        
+        stdout_writer.writerow([
+            packing,
+            "{:.9f}".format(float(packing)*6.0/pi),
+            collisions,
+            n_atoms,
+            my_mean(pressure),
+            my_mean(pressure_collisions),
+            my_mean(msds),
+            my_mean(diffusion),
+            my_mean(time),
+            my_means_std(pressure),
+            my_means_std(pressure_collisions),
+            my_means_std(msds),
+            my_means_std(diffusion),
+            my_means_std(time)
+            ])
