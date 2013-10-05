@@ -29,13 +29,13 @@ equilibration = 219700000
 
 input_files = glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
         "results/500000_*_*_00_{}_*.xml.bz2".format(equilibration))
-print("Got {} files.".format(len(input_files)))
 
 data_files = dict()
 for file_name in input_files:
     packing, collisions = re.search(
             "/500000_([0-9\.]+)_[0-9]+_00_[0-9]+_([0-9]+)\.xml\.bz2$",
             file_name).groups()
+    collisions = int(collisions)
     if packing not in data_files:
         data_files[packing] = dict()
     if collisions not in data_files[packing]:
@@ -66,7 +66,8 @@ for packing, collisions_data in sorted(data_files.iteritems()):
             time.append(xml_get_float(xmldoc, time_tuple))
 
         pressure_collisions = [
-                my_pressure(n_atoms, int(collisions), t) for t in time ]
+                my_pressure(n_atoms, collisions - equilibration, t)
+                for t in time ]
         
         stdout_writer.writerow([
             packing,
