@@ -47,6 +47,7 @@ stdout.write("### Data format: packings\tdensities\tcollisions\tn_atoms\t"
         "pressures_virial\tpressures_collision\tmsds_val\tmsds_diffusion\ttimes\t"
         "std:pressures_virial\tstd:pressures_collision\tstd:msds_val\t"
         "std:msds_diffusion\tstd:times\n")
+stdout.write("### Equilibration: {} collisions.\n".format(equilibration))
 
 for packing, collisions_data in sorted(data_files.iteritems()):
     for collisions, file_names in sorted(data_files[packing].iteritems()):
