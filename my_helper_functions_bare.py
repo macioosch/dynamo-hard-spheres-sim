@@ -1,5 +1,13 @@
 from __future__ import division
-from math import pi, sqrt
+from math import ceil, floor, log10, pi, sqrt
+
+def uncertain_number_string(number, error):
+    precision = int(1 - floor(log10(error)))
+    uncertainty = int(ceil(error / 10**(floor(log10(error)) - 1)))
+    if precision > 1:
+        return "{:.{:.0f}f}({:.0f})".format(number, precision, uncertainty)
+    else:
+        return "{:.1f}({:.1f})".format(number, error)
 
 def xml_get_float(parsed_xml, param_tuple):
     return float(parsed_xml.getElementsByTagName(

@@ -2,7 +2,7 @@
 # encoding=utf-8
 from __future__ import division, print_function
 
-from math import pi
+from math import ceil, floor, log10, pi
 from sys import argv, stdout
 from xml.dom import minidom
 import bz2
@@ -10,6 +10,9 @@ import csv
 
 # local imports
 from my_helper_functions_bare import *
+
+def pretty_mean_std(data):
+    return uncertain_number_string(my_mean(data), my_means_std(data))
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "times"]
@@ -48,9 +51,8 @@ for input_file in argv[1:]:
 
 stdout_writer = csv.writer(stdout, delimiter='\t')
 stdout.write("### Data format: packings\tdensities\tcollisions\tn_atoms\t"
-        "pressures_virial\tpressures_collision\tmsds_val\tmsds_diffusion\ttimes\t"
-        "std:pressures_virial\tstd:pressures_collision\tstd:msds_val\t"
-        "std:msds_diffusion\tstd:times\n")
+        "pressures_virial\tpressures_collision\tmsds_val\tmsds_diffusion\t"
+        "times\n")
 
 for i in xrange(len(data["packings"])):
     if data["msds_diffusion"][i][0] is None:
@@ -60,14 +62,9 @@ for i in xrange(len(data["packings"])):
         "{:.9f}".format(data["packings"][i]*6.0/pi),
         data["collisions"][i],
         data["n_atoms"][i],
-        "{:.9f}".format(my_mean(data["pressures_virial"][i])),
-        "{:.9f}".format(my_mean(data["pressures_collision"][i])),
-        "{:.9f}".format(my_mean(data["msds_val"][i])),
-        "{:.9f}".format(my_mean(data["msds_diffusion"][i])),
-        "{:.9f}".format(my_mean(data["times"][i])),
-        "{:.9f}".format(my_means_std(data["pressures_virial"][i])),
-        "{:.9f}".format(my_means_std(data["pressures_collision"][i])),
-        "{:.9f}".format(my_means_std(data["msds_val"][i])),
-        "{:.9f}".format(my_means_std(data["msds_diffusion"][i])),
-        "{:.9f}".format(my_means_std(data["times"][i]))
+        pretty_mean_std(data["pressures_virial"][i]),
+        pretty_mean_std(data["pressures_collision"][i]),
+        pretty_mean_std(data["msds_val"][i]),
+        pretty_mean_std(data["msds_diffusion"][i]),
+        pretty_mean_std(data["times"][i])
         ])
