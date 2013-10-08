@@ -18,9 +18,10 @@ plotted_parameter = "msds_diffusion"
 #plotted_parameter = "msds_val"
 #plotted_parameter = "times"
 
-skip_points = 20
 
 legend_names = []
+tight_layout = False
+show_legend = False
 
 for file_number, file_name in enumerate(sorted(input_files)):
     data = np.genfromtxt(file_name, delimiter='\t', names=[
@@ -34,36 +35,61 @@ for file_number, file_name in enumerate(sorted(input_files)):
             + data["collisions"][1]
 
     ###   5 graphs: D(CPS)   ###
+    tight_layout = True
+    skip_points = 0
     ax = plt.subplot(3, 2, file_number+1)
-    plt.errorbar((equilibrated_collisions / n_atoms)[skip_points:],
-            data[plotted_parameter][skip_points:],
-            yerr=data["std_" + plotted_parameter][skip_points:])
+    plt.fill_between((equilibrated_collisions / n_atoms)[skip_points:],
+            data[plotted_parameter][skip_points:]
+            - data["std_" + plotted_parameter][skip_points:],
+            data[plotted_parameter][skip_points:]
+            + data["std_" + plotted_parameter][skip_points:], alpha=0.3)
+    plt.plot((equilibrated_collisions / n_atoms)[skip_points:],
+            data[plotted_parameter][skip_points:], lw=2)
+    plt.ylim(0.990*data[plotted_parameter][-1], 1.005*data[plotted_parameter][-1])
     plt.title("Density {}:".format(data["densities"][0]))
     ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.4f'))
     plt.xlabel("Collisions per sphere")
     plt.ylabel("D")
     """
     ###   5 graphs: D(1/CPS)   ###
+    tight_layout = True
+    skip_points = 40
     ax = plt.subplot(3, 2, file_number+1)
+    plt.fill_between((n_atoms / equilibrated_collisions)[skip_points:],
+            data[plotted_parameter][skip_points:]
+            - data["std_" + plotted_parameter][skip_points:],
+            data[plotted_parameter][skip_points:]
+            + data["std_" + plotted_parameter][skip_points:], alpha=0.3)
     plt.plot((n_atoms / equilibrated_collisions)[skip_points:],
-            data[plotted_parameter][skip_points:])
+            data[plotted_parameter][skip_points:], lw=2)
     plt.title("Density {}:".format(data["densities"][0]))
-    ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.4f'))
+    ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.5f'))
     plt.xlim(xmin=0)
     plt.xlabel("1 / Collisions per sphere")
     plt.ylabel("D")
     """
     """
     ###   1 graph: D(CPS) / Dinf   ###
-    plt.errorbar(equilibrated_collisions / n_atoms,
-            data[plotted_parameter] / data[plotted_parameter][-1] - 1,
-            yerr=data["std_" + plotted_parameter] / data[plotted_parameter][-1])
+    show_legend = True
+    plt.fill_between(equilibrated_collisions / n_atoms,
+            (data[plotted_parameter] - data["std_" + plotted_parameter])
+            / data[plotted_parameter][-1] - 1,
+            (data[plotted_parameter] + data["std_" + plotted_parameter])
+            / data[plotted_parameter][-1] - 1, color="grey", alpha=0.4)
+    plt.plot(equilibrated_collisions / n_atoms,
+            data[plotted_parameter] / data[plotted_parameter][-1] - 1, lw=2)
     legend_names.append(data["densities"][0])
     plt.xlabel("Collisions per sphere")
     plt.ylabel("D / D(t --> inf)")
     """
     """
     ###   1 graph: D(1/CPS) / Dinf   ###
+    show_legend = True
+    plt.fill_between(n_atoms / equilibrated_collisions,
+            (data[plotted_parameter] - data["std_" + plotted_parameter])
+            / data[plotted_parameter][-1] - 1,
+            (data[plotted_parameter] + data["std_" + plotted_parameter])
+            / data[plotted_parameter][-1] - 1, color="grey", alpha=0.4)
     plt.plot( n_atoms / equilibrated_collisions,
             data[plotted_parameter] / data[plotted_parameter][-1] - 1)
     legend_names.append(data["densities"][0])
@@ -71,7 +97,9 @@ for file_number, file_name in enumerate(sorted(input_files)):
     plt.ylabel(plotted_parameter)
     """
 
-#plt.legend(legend_names, title="Density:", loc="lower right")
-#plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
+if tight_layout:
+    plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
+if show_legend:
+    plt.legend(legend_names, title="Density:", loc="lower right")
 
 plt.show()
