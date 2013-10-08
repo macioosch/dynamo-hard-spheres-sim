@@ -7,7 +7,9 @@ from itertools import izip
 from matplotlib import pyplot as plt
 import numpy as np
 
-input_files = glob("csv/convergence-*.csv")
+#input_files = glob("csv/convergence-256000-*.csv")
+input_files = glob("csv/convergence-500000-*.csv")
+#input_files = glob("csv/convergence-1000188-*.csv")
 
 plotted_parameter = "msds_diffusion"
 #plotted_parameter = "pressures_collision"
@@ -31,7 +33,6 @@ for file_number, file_name in enumerate(sorted(input_files)):
     equilibrated_collisions = data["collisions"] - 2*data["collisions"][0] \
             + data["collisions"][1]
 
-    """
     ###   5 graphs: D(CPS)   ###
     ax = plt.subplot(3, 2, file_number+1)
     plt.errorbar((equilibrated_collisions / n_atoms)[skip_points:],
@@ -41,7 +42,6 @@ for file_number, file_name in enumerate(sorted(input_files)):
     ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.4f'))
     plt.xlabel("Collisions per sphere")
     plt.ylabel("D")
-    """
     """
     ###   5 graphs: D(1/CPS)   ###
     ax = plt.subplot(3, 2, file_number+1)

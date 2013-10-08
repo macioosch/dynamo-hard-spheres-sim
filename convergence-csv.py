@@ -5,7 +5,7 @@ from __future__ import division, print_function
 from glob import glob
 from math import pi
 from pprint import pprint
-from sys import stdout
+from sys import argv, stdout
 from xml.dom import minidom
 import bz2
 import csv
@@ -25,15 +25,21 @@ msds_tuple = ('Species','val')
 pressure_tuple = ('Pressure','Avg')
 time_tuple = ('Duration','Time')
 
-equilibration = 219700000
+if len(argv) >= 3:
+    number_of_spheres = int(argv[1])
+    equilibration = int(argv[2])
+else:
+    number_of_spheres = 500000
+    equilibration = 219700000
 
 input_files = glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/500000_*_*_00_{}_*.xml.bz2".format(equilibration))
+        "results/{}_*_*_00_{}_*.xml.bz2".format(number_of_spheres,
+            equilibration))
 
 data_files = dict()
 for file_name in input_files:
     packing, collisions = re.search(
-            "/500000_([0-9\.]+)_[0-9]+_00_[0-9]+_([0-9]+)\.xml\.bz2$",
+            "/[0-9]+_([0-9\.]+)_[0-9]+_00_[0-9]+_([0-9]+)\.xml\.bz2$",
             file_name).groups()
     collisions = int(collisions)
     if packing not in data_files:
