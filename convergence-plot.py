@@ -7,8 +7,8 @@ from itertools import izip
 from matplotlib import pyplot as plt
 import numpy as np
 
-#input_files = glob("csv/convergence-256000-*.csv")
-input_files = glob("csv/convergence-500000-*.csv")
+input_files = glob("csv/convergence-256000-*.csv")
+#input_files = glob("csv/convergence-500000-*.csv")
 #input_files = glob("csv/convergence-1000188-*.csv")
 
 plotted_parameter = "msds_diffusion"
@@ -45,8 +45,10 @@ for file_number, file_name in enumerate(sorted(input_files)):
             + data["std_" + plotted_parameter][skip_points:], alpha=0.3)
     plt.plot((equilibrated_collisions / n_atoms)[skip_points:],
             data[plotted_parameter][skip_points:], lw=2)
-    plt.ylim(0.990*data[plotted_parameter][-1], 1.005*data[plotted_parameter][-1])
-    plt.title("Density {}:".format(data["densities"][0]))
+    if plotted_parameter == "msds_diffusion":
+        plt.ylim(0.990*data[plotted_parameter][-1],
+                1.005*data[plotted_parameter][-1])
+    plt.legend(["Density {}".format(data["densities"][0])], loc="lower right")
     ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.4f'))
     plt.xlabel("Collisions per sphere")
     plt.ylabel("D")
@@ -63,7 +65,7 @@ for file_number, file_name in enumerate(sorted(input_files)):
     plt.plot((n_atoms / equilibrated_collisions)[skip_points:],
             data[plotted_parameter][skip_points:], lw=2)
     plt.title("Density {}:".format(data["densities"][0]))
-    ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.5f'))
+    ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.7f'))
     plt.xlim(xmin=0)
     plt.xlabel("1 / Collisions per sphere")
     plt.ylabel("D")
@@ -97,8 +99,8 @@ for file_number, file_name in enumerate(sorted(input_files)):
     plt.ylabel(plotted_parameter)
     """
 
-if tight_layout:
-    plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
+#if tight_layout:
+#    plt.tight_layout(pad=0.0, w_pad=0.0, h_pad=0.0)
 if show_legend:
     plt.legend(legend_names, title="Density:", loc="lower right")
 
