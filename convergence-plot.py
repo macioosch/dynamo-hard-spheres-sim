@@ -7,9 +7,9 @@ from itertools import izip
 from matplotlib import pyplot as plt
 import numpy as np
 
-input_files = glob("csv/convergence-256000-*.csv")
+#input_files = glob("csv/convergence-256000-*.csv")
 #input_files = glob("csv/convergence-500000-*.csv")
-#input_files = glob("csv/convergence-1000188-*.csv")
+input_files = glob("csv/convergence-1000188-*.csv")
 
 plotted_parameter = "msds_diffusion"
 #plotted_parameter = "pressures_collision"
