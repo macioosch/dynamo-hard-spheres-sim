@@ -47,6 +47,7 @@ nosetests.xml
 *-dynamo.*
 sha1_*.sum*
 fit.log
+*.tex
 
 # jobs folder
 jobs/*
