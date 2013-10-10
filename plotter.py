@@ -1,29 +1,41 @@
 #!/usr/bin/env python2
 # encoding=utf-8
-from __future__ import division, print_function, unicode_literals
+from __future__ import division, print_function
 
+from glob import glob
 from uncertainties import numpy as unp, ufloat
+from sys import stdout
 from xml.dom import minidom
 import bz2
-import glob
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
 # local imports
-from my_helper_functions import my_pressure
+from my_helper_functions_bare import *
+from my_helper_functions import *
 
 varying_parameters = ["pressures_virial", "pressures_collision", "msds_val",
         "msds_diffusion", "collisions", "times"]
 data = { i:[] for i in varying_parameters }
 data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.items())
 
-#input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-#        "results/1098500_*_219700000_1098500000.xml.bz2"))
-input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/*_219700000_1098500000.xml.bz2") +
-        glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/*_2097152000_6291456000.xml.bz2"))
-print("Got {} files.".format(len(input_files)))
+#input_files = sorted(glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+#        u"results/1098500_*_219700000_1098500000.xml.bz2"))
+
+# the D(N) results
+smalls = [1372, 2048, 5324, 8788, 16384, 37044, 70304, 131072, 275684]
+input_files = glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+        u"results/*_2097152000_6291456000.xml.bz2")
+for s in smalls:
+    input_files += glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+            u"results/{}_*_219700000_1098500000.xml.bz2".format(s))
+input_files = sorted(input_files)
+
+
+stdout_writer = csv.writer(stdout, delimiter='\t')
+stdout.write("### Data format: n_atoms\tmsds_diffusion\tstd:msds_diffusion\n")
+
 
 for input_file in input_files:
     xmldoc = minidom.parse(bz2.BZ2File(input_file))
@@ -104,6 +116,9 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
             if abs(p/packing - 1.0) < 1e-4 ]
     if len(ns) > 1:
         ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
+
+        stdout.write("###\n### Density: {:.3f}\n###\n".format(packing*6/np.pi))
+        stdout_writer.writerows(zip(ns, ds, er))
 
         plt.subplot(subplot)
         plt.title("Packing fraction: {}".format(packing))
