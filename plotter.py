@@ -118,7 +118,13 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
 
         stdout.write("###\n### Density: {:.3f}\n###\n".format(packing*6/np.pi))
-        stdout_writer.writerows(zip(ns, ds, er))
+        n_ints = [ int(n) for n in ns ]
+
+        # the normal csv version:
+        stdout_writer.writerows(zip(n_ints, ds, er))
+        ## the pretty version:
+        #unc_strings = [ uncertain_number_string(d, e) for d, e in zip(ds, er) ]
+        #stdout_writer.writerows(zip(n_ints, unc_strings))
 
         plt.subplot(subplot)
         plt.title("Packing fraction: {}".format(packing))
