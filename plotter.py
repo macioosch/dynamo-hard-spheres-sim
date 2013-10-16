@@ -24,9 +24,13 @@ data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.ite
 #        u"results/1098500_*_219700000_1098500000.xml.bz2"))
 
 # the D(N) results
-smalls = [1372, 2048, 5324, 8788, 16384, 37044, 70304, 131072, 275684]
 input_files = glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        u"results/*_2097152000_6291456000.xml.bz2")
+        u"results/2125764_*_2097152000_14851736000.xml.bz2")
+mediums = [389344, 530604, 780448, 1048576, 1257728, 1492992]
+for s in mediums:
+    input_files += glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
+            u"results/{}_*_2097152000_6291456000.xml.bz2".format(s))
+smalls = [1372, 2048, 5324, 8788, 16384, 37044, 70304, 131072, 275684]
 for s in smalls:
     input_files += glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
             u"results/{}_*_219700000_1098500000.xml.bz2".format(s))
