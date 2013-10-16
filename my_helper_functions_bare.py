@@ -1,3 +1,4 @@
+# encoding=utf-8
 from __future__ import division
 from math import ceil, exp, floor, log, log10, pi, sqrt
 
