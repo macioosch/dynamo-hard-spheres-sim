@@ -4,6 +4,7 @@ from __future__ import division, print_function
 
 from glob import glob
 from uncertainties import numpy as unp, ufloat
+from scipy.optimize import curve_fit
 from sys import stdout
 from xml.dom import minidom
 import bz2
@@ -107,6 +108,9 @@ plt.plot(data["packings"], [np.mean(i) for i in data["msds_diffusion"]], '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("Diffusion coefficient")
 """
+def fit_func(x, y0, a, p):
+    return y0 - a*x**p
+
 ax = plt.figure(4)
 graphed_parameter = "msds_diffusion"
 legend_names = []
@@ -121,6 +125,7 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
     if len(ns) > 1:
         ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
 
+        """
         stdout.write("###\n### Density: {:.3f}\n###\n".format(packing*6/np.pi))
         n_ints = [ int(n) for n in ns ]
 
@@ -129,6 +134,7 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         ## the pretty version:
         #unc_strings = [ uncertain_number_string(d, e) for d, e in zip(ds, er) ]
         #stdout_writer.writerows(zip(n_ints, unc_strings))
+        """
 
         plt.subplot(subplot)
         plt.title("Packing fraction: {}".format(packing))
@@ -136,6 +142,12 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         if subplot in {324, 325}:
             plt.xlabel("1/N")
         plt.xscale("log")
+        plt.yscale("log")
+
+        popt, pcov = curve_fit(fit_func, 1./ns, ds, [0.4, 0.1, 0.3], er/np.sqrt(len(er)))
+        print(popt, pcov)
+        plt.plot(1./ns, fit_func(1./ns, *popt))
+
         plt.errorbar(1.0/ns, ds, fmt='.', yerr=er/np.sqrt(len(er)))
         
         #plt.errorbar(1.0/ns, ds/ds[-1], fmt='-o', yerr=er / np.sqrt(len(er)) / ds[-1])

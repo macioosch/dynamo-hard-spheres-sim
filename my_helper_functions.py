@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from scipy.sparse import csr_matrix
+from scipy.special import gammaln
 import numpy as np
 
 def my_means_std(args):
@@ -8,12 +9,12 @@ def my_means_std(args):
         return 0.0
     return np.std(args) / np.sqrt(N)
 
+def my_gamma_factor(N):
+        return np.exp(gammaln((3*(N-1)+1)/2.) - gammaln(3*(N-1)/2.) - 0.5*np.log(3*N/2.))
+
 def my_pressure(n_atoms, n_coll, delta_t):
-    # only when m = \sigma = \beta = \gamma(n_atoms) = 1.0
-    # const_var is a static variable
-    if "const_var" not in my_pressure.__dict__:
-        my_pressure.const_var = np.sqrt(np.pi) / 3
-    return 1.0 + my_pressure.const_var * n_coll / (n_atoms * delta_t)
+    # only when m = \sigma = \beta = 1.0
+    return 1.0 + my_gamma_factor(n_atoms)*sqrt(pi)*n_coll / (3.*n_atoms*delta_t)
 
 def xml_get_float(parsed_xml, param_tuple):
     return float(parsed_xml.getElementsByTagName(

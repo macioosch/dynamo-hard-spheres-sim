@@ -1,5 +1,5 @@
 from __future__ import division
-from math import ceil, floor, log10, pi, sqrt
+from math import ceil, exp, floor, log, log10, pi, sqrt
 
 def uncertain_number_string(number, error):
     precision = int(1 - floor(log10(error)))
@@ -41,9 +41,13 @@ def my_std(args):
     sum_squares = sum([ (x - mean_value)**2.0 for x in args ])
     return sqrt(sum_squares / (N-1.0))
 
+def my_gammaln(x):
+    # Gergő Nemes, 2007
+    return 0.5*(log(2*pi)-log(x)) + x*(log(x+1./(12*x-0.1/x))-1)
+
+def my_gamma_factor(N):
+    return exp(my_gammaln((3*(N-1)+1)/2.) - my_gammaln(3*(N-1)/2.) - 0.5*log(3*N/2.))
+
 def my_pressure(n_atoms, n_coll, delta_t):
-    # only when m = \sigma = \beta = \gamma(n_atoms) = 1.0
-    # const_var is a static variable
-    if "const_var" not in my_pressure.__dict__:
-        my_pressure.const_var = sqrt(pi) / 3.
-    return 1.0 + my_pressure.const_var * n_coll / (n_atoms * delta_t)
+    # only when m = \sigma = \beta = 1.0
+    return 1.0 + my_gamma_factor(n_atoms)*sqrt(pi)*n_coll / (3.*n_atoms*delta_t)
