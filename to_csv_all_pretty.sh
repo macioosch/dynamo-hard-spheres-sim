@@ -9,13 +9,13 @@ if [ -d ~/Dropbox ]; then
     echo "Processing results from Dropbox…"
     ./to_csv_pretty.py ~/Dropbox/staż\ 2013/02-hard-spheres/$FILES > $OUTPUT
 elif [ -d results ]; then
-    echo "Processing results from Dropbox…"
+    echo "Processing local results…"
     ./to_csv_pretty.py $FILES > $OUTPUT
 else
     echo "No results found!"
     exit 1
 fi
 
-tail -n +20 $OUTPUT | head -n 49 > csv/uniform.csv
+tail -n +20 $OUTPUT | head -n 49 > csv/uniform_pretty.csv
 
 #./plot_pressure.gnuplot

@@ -50,13 +50,18 @@ for input_file in argv[1:]:
         data["msds_diffusion"][-1].append(None)
 
 stdout_writer = csv.writer(stdout, delimiter='\t')
+"""
 stdout.write("### Data format: packings\tdensities\tcollisions\tn_atoms\t"
         "pressures_virial\tpressures_collision\tmsds_val\tmsds_diffusion\t"
         "times\n")
+"""
+stdout.write("\multicolumn{1}{c}{$\zeta$}\t\multicolumn{1}{c}{$Z_{MD}$}\t"
+        "\multicolumn{1}{c}{$\Delta Z_{MD}$}\n")
 
 for i in xrange(len(data["packings"])):
     if data["msds_diffusion"][i][0] is None:
         continue
+    """
     stdout_writer.writerow([
         "{:.9f}".format(data["packings"][i]),
         "{:.9f}".format(data["packings"][i]*6.0/pi),
@@ -67,4 +72,10 @@ for i in xrange(len(data["packings"])):
         pretty_mean_std(data["msds_val"][i]),
         pretty_mean_std(data["msds_diffusion"][i]),
         pretty_mean_std(data["times"][i])
+        ])
+    """
+    stdout_writer.writerow([
+        "{:.9f}".format(data["packings"][i]),
+        "{:.9f}".format(my_mean(data["pressures_collision"][i])),
+        "{:.9f}".format(my_means_std(data["pressures_collision"][i]))
         ])
