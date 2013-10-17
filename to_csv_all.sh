@@ -6,12 +6,13 @@ OUTPUT='csv/D-vs-N-new.csv'
 #OUTPUT='csv/1098500_219700000_1098500000.csv'
 
 if [ -d ~/Dropbox ]; then
-    #PREFIX='~/Dropbox/staż 2013/02-hard-spheres/'
+    echo "Processing results from Dropbox…"
     ./to_csv.py ~/Dropbox/staż\ 2013/02-hard-spheres/$FILES > $OUTPUT
 elif [ -d results ]; then
+    echo "Processing local results…"
     ./to_csv.py $FILES > $OUTPUT
 else
-    print "No results found!"
+    echo "No results found!"
     exit 1
 fi
 
