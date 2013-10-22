@@ -20,7 +20,7 @@ data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.ite
 
 input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
         "results/1098500_*_219700000_1098500000.xml.bz2"))
-print("Got {} files.".format(len(input_files)))
+#print("Got {} files.".format(len(input_files)))
 
 for input_file in input_files:
     xmldoc = minidom.parse(bz2.BZ2File(input_file))
@@ -52,8 +52,8 @@ for input_file in input_files:
         data["msds_val"][-1].append(None)
         data["msds_diffusion"][-1].append(None)
 
-#graphed_parameter = data["pressures_collision"]
-graphed_parameter = data["pressures_virial"]
+graphed_parameter = data["pressures_collision"]
+#graphed_parameter = data["pressures_virial"]
 plt.figure(0)
 up = unp.uarray([np.mean(i) for i in graphed_parameter],
     [np.std(i)/np.sqrt(len(i)) for i in graphed_parameter])
@@ -63,11 +63,14 @@ up = unp.uarray([np.mean(i) for i in graphed_parameter],
 
 DX = nufd(np.array(data["packings"])).toarray()
 
+for z, d in zip(data["packings"], np.dot(DX, up)):
+    print("{:.9f}\t{:.9f}\t{:.9f}".format(z, d.n, d.s))
+
 #x1, p1 = uderivative_oh4(np.array(data["packings"]), up)
 #uplot(x1, p1)
 #plt.legend(["O(h^4) method", "Array method"])
 uplot(np.array(data["packings"]), np.dot(DX, up))
-plt.ylabel("First derivative of pressure: dp/dn")
+plt.ylabel("First derivative of compressibility: $dZ_{MD}/d\\zeta$")
 
 #x2, p2 = uderivative_2_oh4(np.array(data["packings"]), up)
 #uplot(x2, p2)
@@ -75,7 +78,7 @@ plt.ylabel("First derivative of pressure: dp/dn")
 #uplot(np.array(data["packings"]), np.dot(DX, np.dot(DX, up)))
 #plt.ylabel("Second derivative of pressure: d2p/dn2")
 
-plt.xlabel("Packing fraction n")
+plt.xlabel("Packing fraction $\\zeta$")
 plt.xlim(0.275, 0.287)
 
 ## plot of standard deviations:

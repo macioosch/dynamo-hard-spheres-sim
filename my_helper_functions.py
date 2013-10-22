@@ -10,11 +10,13 @@ def my_means_std(args):
     return np.std(args) / np.sqrt(N)
 
 def my_gamma_factor(N):
-        return np.exp(gammaln((3*(N-1)+1)/2.) - gammaln(3*(N-1)/2.) - 0.5*np.log(3*N/2.))
+        return np.exp(gammaln((3*(N-1)+1)/2.) - gammaln(3*(N-1)/2.) \
+                - 0.5*np.log(3*N/2.))
 
 def my_pressure(n_atoms, n_coll, delta_t):
     # only when m = \sigma = \beta = 1.0
-    return 1.0 + my_gamma_factor(n_atoms)*sqrt(pi)*n_coll / (3.*n_atoms*delta_t)
+    return 1.0 + my_gamma_factor(n_atoms)*np.sqrt(np.pi)*n_coll \
+            / (3.*n_atoms*delta_t)
 
 def xml_get_float(parsed_xml, param_tuple):
     return float(parsed_xml.getElementsByTagName(

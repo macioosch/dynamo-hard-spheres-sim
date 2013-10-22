@@ -1,10 +1,14 @@
 #!/usr/bin/gnuplot
-set terminal pdf enhanced color dashed
+set terminal pdf enhanced mono dashed font "CMU Serif,13"
 
 system("[ -f fit.log ] && rm fit.log")
 
 set datafile separator "\t"
 file = "csv/uniform.csv"
+
+d1_file = "csv/dzmd-dzeta-uniform-cropped.csv"
+d1_first = "csv/dzmd-dzeta-uniform-first.csv"
+d1_last = "csv/dzmd-dzeta-uniform-last.csv"
 
 a1 = -1.64
 b1 = 18.7
@@ -19,11 +23,9 @@ fit y2(x) file u 1:6 via a2,b2,c2
 
 unset key
 set format x "%.3f"
-set xlabel "Packing fraction n"
-set ylabel "Pressure difference {/Symbol D}p"
+set xlabel "Packing fraction {/Symbol z}"
 
 set output "plots/linear.pdf"
-set title sprintf("Differential plot of a linear fit: p = %.2f n %+.2f", b1, a1)
 set format y "%.4f"
 set ytics 0.0004
 set xrange [0.274:0.288]
@@ -32,20 +34,39 @@ plot y2(x) - y1(x) lc rgb "#777777",\
     file u 1:($6 - y1($1)):11 w yerrorbars ls 1
 
 set output "plots/quadratic.pdf"
-set ylabel "Relative pressure difference {/Symbol D}p / p / 10^{–6}"
-set title sprintf("Differential plot of a quadratic fit: p = %.2f n^2 %+.2f n %+.2f", c2, b2, a2)
+set ylabel "Compressibility difference {/Symbol D}Z_{MD} / 10^{–5}"
 set format y "%.1f"
-set ytics auto
-set autoscale y
-plot file u 1:( 1e6*($6-y2($1))/$6 ):( 1e6*$11/$6 ) w yerrorbars
+set ytics 1
+set yrange [-5:5]
+plot file u 1:( 1e5*($6-y2($1)) ):( 1e5*$11 ) w yerrorbars
 
-set key bottom right
+set key top left invert
 
 set output "plots/pressure-fit.pdf"
-set title "Computed pressure values"
-set ylabel "Pressure p"
+set ylabel "Compressibility Z_{MD}"
 set format y "%.2f"
 set ytics 0.05
-plot y1(x) lc rgb "#ff7777" t "linear fit",\
-    y2(x) lc rgb "#7777ff" t "quadratic fit",\
-    file u 1:6:11 w yerrorbars ls 1 t "pressure"
+set autoscale y
+set label 1 sprintf("Z_{MD} = %.4f {/Symbol z}^2 %+.4f {/Symbol z} %+.5f", c2, b2, a2) \
+    at 0.280,3.52
+plot y2(x) lc rgb "#666666" t "Quadratic fit",\
+    file u 1:6 w p ls 7 ps 0.25 t "Z_{MD}"
+
+d0(x) = db0*x + da0
+fit d0(x) d1_file u 1:2 via da0,db0
+d1(x) = db1*x + da1
+fit d1(x) d1_first u 1:2 via da1,db1
+d2(x) = db2*x + da2
+fit d2(x) d1_last u 1:2 via da2,db2
+
+set output "plots/dzmd-dzeta.pdf"
+set ylabel "First derivative of compressibility dZ_{MD} / d{/Symbol z}"
+set ytics auto
+set yrange[17.7:19.5]
+set label 1 sprintf("Fit through all 43 points: dZ_{MD} / d{/Symbol z} = %.1f {/Symbol z} %+.2f", db0, da0) at 0.287,18.15 right
+set label 2 sprintf("Fit through first 21 points: dZ_{MD} / d{/Symbol z} = %.1f {/Symbol z} %+.2f", db1, da1) at 0.287,18.0 right
+set label 3 sprintf("Fit through last 21 points: dZ_{MD} / d{/Symbol z} = %.1f {/Symbol z} %+.2f", db2, da2) at 0.287,17.9 right
+
+plot d0(x) lc rgb "#777777" t "Fit through all points",\
+    d1_file w yerrorbars ls 1 t "dZ_{MD} / d{/Symbol z}"
+
