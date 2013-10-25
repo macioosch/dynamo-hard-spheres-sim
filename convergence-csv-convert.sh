@@ -7,3 +7,6 @@ time ./convergence-csv.py 256000 2560000000 > csv/convergence-256000.csv
 
 cd csv/
 source convergence-densities.sh
+
+cd ..
+./convergence-plot.py
