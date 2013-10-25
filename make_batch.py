@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from numpy import linspace, pi
 
-base_str = './jobber.py -q --pp "m" --p0 {0:.0f} --p1 {0:.0f} --pn 1 --log '\
+base_str = './jobber.py -q --pp "m" --p0 {0:.0f} --p1 {0:.0f} --pn 1 '\
         '--round "-p {1:.16f} -r 1 -e {2:.0f} -c {3:.0f}"'
 
 for N in (int(i) for i in 2**linspace(10,20,11)):
