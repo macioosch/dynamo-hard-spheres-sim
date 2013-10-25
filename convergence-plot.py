@@ -48,10 +48,38 @@ for file_number, file_name in enumerate(sorted(input_files)):
     if plotted_parameter == "msds_diffusion":
         plt.ylim(0.990*data[plotted_parameter][-1],
                 1.005*data[plotted_parameter][-1])
+    plt.xlim([0, 1e5])
     plt.legend(["Density {}".format(data["densities"][0])], loc="lower right")
     ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.4f'))
     plt.xlabel("Collisions per sphere")
     plt.ylabel("D")
+    """
+    ###   1 graph: D(t)   ###
+    show_legend = True
+    skip_points = 0
+    plt.title("D(t) for 5 densities")
+    plt.loglog(data["times"][skip_points:],
+            data[plotted_parameter][skip_points:])
+    legend_names.append(data["densities"][0])
+    plt.xlabel("Time")
+    plt.ylabel("D")
+    """
+    """
+    ###   1 graph: D(t) / Dinf   ###
+    show_legend = True
+    skip_points = 0
+    #plt.fill_between(data["times"][skip_points:],
+    #        (data[plotted_parameter] - data["std_" + plotted_parameter])
+    #        / data[plotted_parameter][-1] - 1,
+    #        (data[plotted_parameter] + data["std_" + plotted_parameter])
+    #        / data[plotted_parameter][-1] - 1, color="grey", alpha=0.4)
+    plt.plot(data["times"][skip_points:],
+            data[plotted_parameter] / data[plotted_parameter][-1] - 1, lw=1)
+    legend_names.append(data["densities"][0])
+    #plt.xscale("log")
+    plt.xlabel("Time")
+    plt.ylabel("D / D(t --> inf)")
+    """
     """
     ###   5 graphs: D(1/CPS)   ###
     tight_layout = True
