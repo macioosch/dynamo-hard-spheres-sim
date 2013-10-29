@@ -5,12 +5,13 @@ from __future__ import division, print_function
 from glob import glob
 from uncertainties import numpy as unp, ufloat
 from scipy.optimize import curve_fit
-from sys import stdout
+from sys import stderr, stdout
 from xml.dom import minidom
 import bz2
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+import progressbar as pb
 
 # local imports
 from my_helper_functions_bare import *
@@ -25,24 +26,32 @@ data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.ite
 #        u"results/1098500_*_219700000_1098500000.xml.bz2"))
 
 # the D(N) results
-input_files = glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        u"results/2125764_*_2097152000_14851736000.xml.bz2")
-mediums = [389344, 530604, 780448, 1048576, 1257728, 1492992]
-for s in mediums:
-    input_files += glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-            u"results/{}_*_2097152000_6291456000.xml.bz2".format(s))
-smalls = [1372, 2048, 5324, 8788, 16384, 37044, 70304, 131072, 275684]
-for s in smalls:
-    input_files += glob(u"/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-            u"results/{}_*_219700000_1098500000.xml.bz2".format(s))
-input_files = sorted(input_files)
+input_files = []
+base_path = u"/home/mc/Dropbox/staż 2013/02-hard-spheres/results/"
 
+widgets = ['Finding files: ', pb.Counter(), ' done (', pb.Percentage(),
+    '), ', pb.ETA(), ' ', pb.Bar()]
+pbar = pb.ProgressBar(widgets=widgets, maxval=55)
+pbar.start()
+
+for i_index, i in enumerate(2**np.linspace(10,20,11)):
+    N = int(np.ceil((i/4.)**(1/3.))**3*4)
+    for pf_index, pf in enumerate(np.linspace(0.1,0.9,5)*np.pi/6):
+        input_files += glob(base_path \
+                + u"{:.0f}_{:.12f}_*_{:.0f}_{:.0f}.xml.bz2".format(
+                    N, pf, N*12e3, N*12e3 + N*6e4))
+        pbar.update(1 + pf_index + 5*i_index)
+
+pbar.finish()
 
 stdout_writer = csv.writer(stdout, delimiter='\t')
 stdout.write("### Data format: n_atoms\tmsds_diffusion\tstd:msds_diffusion\n")
 
+widgets = ['Processing files: ', pb.Counter(), ' done (', pb.Percentage(),
+    '), ', pb.ETA(), ' ', pb.Bar()]
+pbar = pb.ProgressBar(widgets=widgets)
 
-for input_file in input_files:
+for input_file in pbar(input_files):
     xmldoc = minidom.parse(bz2.BZ2File(input_file))
 
     packing = float(xmldoc.getElementsByTagName('PackingFraction')[0].attributes['val'].value)
@@ -108,8 +117,8 @@ plt.plot(data["packings"], [np.mean(i) for i in data["msds_diffusion"]], '-o')
 plt.xlabel("Packing fraction")
 plt.ylabel("Diffusion coefficient")
 """
-def fit_func(x, y0, a, p):
-    return y0 - a*x**p
+def fit_func(x, y0, a):
+    return y0 - a*x
 
 ax = plt.figure(4)
 graphed_parameter = "msds_diffusion"
@@ -125,7 +134,6 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
     if len(ns) > 1:
         ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
 
-        """
         stdout.write("###\n### Density: {:.3f}\n###\n".format(packing*6/np.pi))
         n_ints = [ int(n) for n in ns ]
 
@@ -134,22 +142,32 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         ## the pretty version:
         #unc_strings = [ uncertain_number_string(d, e) for d, e in zip(ds, er) ]
         #stdout_writer.writerows(zip(n_ints, unc_strings))
-        """
 
         plt.subplot(subplot)
-        plt.title("Packing fraction: {}".format(packing))
-        plt.ylabel("Diffusion coefficient")
+        plt.ylabel("$D$")
         if subplot in {324, 325}:
-            plt.xlabel("1/N")
-        plt.xscale("log")
-        plt.yscale("log")
+            plt.xlabel("$N^{-1/3}$")
+        #plt.xscale("log")
+        #plt.yscale("log")
+        plt.xlim([0, 0.1])
 
-        popt, pcov = curve_fit(fit_func, 1./ns, ds, [0.4, 0.1, 0.3], er/np.sqrt(len(er)))
-        print(popt, pcov)
-        plt.plot(1./ns, fit_func(1./ns, *popt))
+        # Curve fitting:
+        popt, pcov = curve_fit(fit_func, 1./ns**(1/3.), ds, [0.4, 0.1],
+                er/np.sqrt(len(er)))
+        stderr.write("density: {}, y0 = {}, a = {}\n".format(packing*6/np.pi,
+                uncertain_number_string(popt[0], np.sqrt(pcov[0][0])),
+                uncertain_number_string(popt[1], np.sqrt(pcov[1][1]))))
+        xs = np.linspace(0, 0.1, 100)
+        plt.plot(xs, fit_func(xs, *popt))
 
-        plt.errorbar(1.0/ns, ds, fmt='.', yerr=er/np.sqrt(len(er)))
+        plt.errorbar(1.0/ns**(1/3.), ds, fmt='.', yerr=er/np.sqrt(len(er)))
+
+        plt.ylim(popt[0] * np.array([0.90, 1.02]))
         
+        plt.legend(["$\\rho\\sigma^3 =$ ${:.1f},$".format(packing*6/np.pi)
+                + " $D_{inf}"+"$ $=$ ${}$".format(uncertain_number_string(
+                    popt[0], np.sqrt(pcov[0][0])))], loc="lower left")
+
         #plt.errorbar(1.0/ns, ds/ds[-1], fmt='-o', yerr=er / np.sqrt(len(er)) / ds[-1])
         #legend_names.append(packing)
 #plt.ylabel("Diffusion coefficient relative to the \"precise\" value: "

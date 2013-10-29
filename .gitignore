@@ -49,6 +49,7 @@ sha1_*.sum*
 fit.log
 *.tex
 *.zip
+results
 
 # jobs folder
 jobs/*
