@@ -3,6 +3,7 @@
 from __future__ import division, print_function
 
 from glob import glob
+from itertools import izip
 from uncertainties import numpy as unp, ufloat
 from scipy.optimize import curve_fit
 from sys import stderr, stdout
@@ -124,25 +125,25 @@ def fit_func(x, y0, a):
 ax = plt.figure(4)
 graphed_parameter = "msds_diffusion"
 legend_names = []
-for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
+for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         [321, 322, 323, 324, 325]):
-    ns = [ n for n, p in zip(data["n_atoms"], data["packings"])
+    ns = [ n for n, p in izip(data["n_atoms"], data["packings"])
             if abs(p/packing - 1.0) < 1e-4 ]
-    ds = [ np.mean(d) for d, p in zip(data[graphed_parameter], data["packings"])
+    ds = [ np.mean(d) for d, p in izip(data[graphed_parameter], data["packings"])
             if abs(p/packing - 1.0) < 1e-4 ]
-    er = [ np.std(d) for d, p in zip(data[graphed_parameter], data["packings"])
+    er = [ np.std(d) for d, p in izip(data[graphed_parameter], data["packings"])
             if abs(p/packing - 1.0) < 1e-4 ]
     if len(ns) > 1:
-        ns, ds, er = np.array(sorted(zip(ns, ds, er))).T
+        ns, ds, er = np.array(sorted(izip(ns, ds, er))).T
 
         stdout.write("###\n### Density: {:.3f}\n###\n".format(packing*6/np.pi))
         n_ints = [ int(n) for n in ns ]
 
         # the normal csv version:
-        stdout_writer.writerows(zip(n_ints, ds, er))
+        stdout_writer.writerows(izip(n_ints, ds, er))
         ## the pretty version:
-        #unc_strings = [ uncertain_number_string(d, e) for d, e in zip(ds, er) ]
-        #stdout_writer.writerows(zip(n_ints, unc_strings))
+        #unc_strings = [ uncertain_number_string(d, e) for d, e in izip(ds, er) ]
+        #stdout_writer.writerows(izip(n_ints, unc_strings))
 
         plt.subplot(subplot)
         plt.ylabel("$D$")
@@ -153,6 +154,7 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         plt.xlim([0, 0.1])
 
         # Curve fitting:
+        er = [ max(1e-16*d, e) for d, e in izip(ds, er) ]
         popt, pcov = curve_fit(fit_func, 1./ns**(1/3.), ds, [0.4, 0.1],
                 er/np.sqrt(len(er)))
         if isinstance(pcov, collections.Iterable):
