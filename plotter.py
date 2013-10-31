@@ -155,8 +155,9 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
 
         # Curve fitting:
         er = [ max(1e-16*d, e) for d, e in izip(ds, er) ]
-        popt, pcov = curve_fit(fit_func, 1./ns**(1/3.), ds, [0.4, 0.1],
-                er/np.sqrt(len(er)))
+        skip = 3
+        popt, pcov = curve_fit(fit_func, 1./ns[skip:]**(1/3.), ds[skip:], [0.4, 0.1],
+                er[skip:]/np.sqrt(len(er[skip:])))
         if isinstance(pcov, collections.Iterable):
             stderr.write("density: {}, y0 = {}, a = {}\n".format(packing*6/np.pi,
                     uncertain_number_string(popt[0], np.sqrt(pcov[0][0])),
@@ -172,6 +173,8 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
             plt.legend(["$\\rho\\sigma^3 =$ ${:.1f},$".format(packing*6/np.pi)
                     + " $D_{inf}"+"$ $=$ ${}$".format(uncertain_number_string(
                         popt[0], np.sqrt(pcov[0][0])))], loc="lower left")
+
+        #plt.plot(1.0/ns**(1/3.), er/np.sqrt(len(er)), 'o')
 
         #plt.errorbar(1.0/ns, ds/ds[-1], fmt='-o', yerr=er / np.sqrt(len(er)) / ds[-1])
         #legend_names.append(packing)
