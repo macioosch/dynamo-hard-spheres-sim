@@ -8,6 +8,7 @@ from scipy.optimize import curve_fit
 from sys import stderr, stdout
 from xml.dom import minidom
 import bz2
+import collections
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -154,9 +155,10 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         # Curve fitting:
         popt, pcov = curve_fit(fit_func, 1./ns**(1/3.), ds, [0.4, 0.1],
                 er/np.sqrt(len(er)))
-        stderr.write("density: {}, y0 = {}, a = {}\n".format(packing*6/np.pi,
-                uncertain_number_string(popt[0], np.sqrt(pcov[0][0])),
-                uncertain_number_string(popt[1], np.sqrt(pcov[1][1]))))
+        if isinstance(pcov, collections.Iterable):
+            stderr.write("density: {}, y0 = {}, a = {}\n".format(packing*6/np.pi,
+                    uncertain_number_string(popt[0], np.sqrt(pcov[0][0])),
+                    uncertain_number_string(popt[1], np.sqrt(pcov[1][1]))))
         xs = np.linspace(0, 0.1, 100)
         plt.plot(xs, fit_func(xs, *popt))
 
@@ -164,9 +166,10 @@ for packing, subplot in zip(np.linspace(0.1, 0.9, 5) * np.pi/6,
 
         plt.ylim(popt[0] * np.array([0.90, 1.02]))
         
-        plt.legend(["$\\rho\\sigma^3 =$ ${:.1f},$".format(packing*6/np.pi)
-                + " $D_{inf}"+"$ $=$ ${}$".format(uncertain_number_string(
-                    popt[0], np.sqrt(pcov[0][0])))], loc="lower left")
+        if isinstance(pcov, collections.Iterable):
+            plt.legend(["$\\rho\\sigma^3 =$ ${:.1f},$".format(packing*6/np.pi)
+                    + " $D_{inf}"+"$ $=$ ${}$".format(uncertain_number_string(
+                        popt[0], np.sqrt(pcov[0][0])))], loc="lower left")
 
         #plt.errorbar(1.0/ns, ds/ds[-1], fmt='-o', yerr=er / np.sqrt(len(er)) / ds[-1])
         #legend_names.append(packing)

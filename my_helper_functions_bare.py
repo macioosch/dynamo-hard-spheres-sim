@@ -3,6 +3,8 @@ from __future__ import division
 from math import ceil, exp, floor, log, log10, pi, sqrt
 
 def uncertain_number_string(number, error):
+    if error == 0:
+        return str(number)
     precision = int(1 - floor(log10(error)))
     uncertainty = int(ceil(error / 10**(floor(log10(error)) - 1)))
     if precision > 1:
