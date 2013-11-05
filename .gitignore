@@ -50,6 +50,7 @@ fit.log
 *.tex
 *.zip
 results
+*.pickle
 
 # jobs folder
 jobs/*
