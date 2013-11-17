@@ -149,11 +149,11 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         n_ints = [ int(n) for n in ns ]
 
         # the normal csv version:
-        stdout_writer.writerows(izip(rho, zeta, n_ints, ds, er, runs))
+        stdout_writer.writerows(izip(round(rho, 2), zeta, n_ints, ds, er, runs))
         """
         # the pretty version:
         unc_strings = [ uncertain_number_string(d, e) for d, e in izip(ds, er) ]
-        stdout_writer.writerows(izip(rho, zeta, n_ints, unc_strings, runs))
+        stdout_writer.writerows(izip(round(rho, 2), zeta, n_ints, unc_strings, runs))
         """
 
         plt.subplot(subplot)
