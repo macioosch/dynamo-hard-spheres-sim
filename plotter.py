@@ -129,7 +129,8 @@ def fit_func(x, y0, a):
     return y0 - a*x
 
 ax = plt.figure(4)
-graphed_parameter = "msds_diffusion"
+#graphed_parameter = "msds_diffusion"
+graphed_parameter = "pressures_collision"
 legend_names = []
 for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         [321, 322, 323, 324, 325]):
@@ -143,13 +144,15 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
             if abs(p/packing - 1.0) < 1e-4 ]
     zeta = [ p for p in data["packings"] if abs(p/packing - 1.0) < 1e-4 ]
     rho = np.array(zeta) * 6./np.pi
+    # rounded rho:
+    rho = [ round(r, 2) for r in rho ] 
 
     if len(ns) > 1:
         ns, ds, er = np.array(sorted(izip(ns, ds, er))).T
         n_ints = [ int(n) for n in ns ]
 
         # the normal csv version:
-        stdout_writer.writerows(izip(round(rho, 2), zeta, n_ints, ds, er, runs))
+        stdout_writer.writerows(izip(rho, zeta, n_ints, ds, er, runs))
         """
         # the pretty version:
         unc_strings = [ uncertain_number_string(d, e) for d, e in izip(ds, er) ]
@@ -157,17 +160,18 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         """
 
         plt.subplot(subplot)
-        plt.ylabel("$D$")
+        plt.ylabel("$Z_{MD}$")
         if subplot in {324, 325}:
-            plt.xlabel("$N^{-1/3}$")
-        #plt.xscale("log")
+            plt.xlabel("$N^{-1/1}$")
+        plt.xscale("log")
+        plt.xlim([1e-7, 1e-4])
         #plt.yscale("log")
-        plt.xlim([0, 0.1])
+        #plt.xlim([0, 0.1])
 
         # Curve fitting:
         er = [ max(1e-16*d, e) for d, e in izip(ds, er) ]
         skip = 3
-        popt, pcov = curve_fit(fit_func, 1./ns[skip:]**(1/3.), ds[skip:],
+        popt, pcov = curve_fit(fit_func, 1./ns[skip:]**(1/1.), ds[skip:],
                 [0.4, 0.1], er[skip:])
         if isinstance(pcov, collections.Iterable):
             #stderr.write("density: {}, y0 = {}, a = {}\n".format(packing*6/np.pi,
@@ -177,11 +181,11 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
                     popt[0], np.sqrt(pcov[0][0]), popt[1], np.sqrt(pcov[1][1])))
 
         # normal plot
-        xs = np.linspace(0, 0.1, 100)
+        xs = np.logspace(-7, -4, 100)
         plt.plot(xs, fit_func(xs, *popt))
-        plt.errorbar(1.0/ns**(1/3.), ds, fmt='.', yerr=er)
+        plt.errorbar(1.0/ns**(1/1.), ds, fmt='.', yerr=er)
 
-        plt.ylim(popt[0] * np.array([0.90, 1.02]))
+        #plt.ylim(popt[0] * np.array([0.90, 1.02]))
         """
         # differential plot
         plt.errorbar(1.0/ns**(1/3.), ds - fit_func(1.0/ns**(1/3.), *popt),
