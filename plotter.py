@@ -162,11 +162,10 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
         plt.subplot(subplot)
         plt.ylabel("$Z_{MD}$")
         if subplot in {324, 325}:
-            plt.xlabel("$N^{-1/1}$")
-        plt.xscale("log")
-        plt.xlim([1e-7, 1e-4])
+            plt.xlabel("$N^{-1/3}$")
+        #plt.xscale("log")
         #plt.yscale("log")
-        #plt.xlim([0, 0.1])
+        plt.xlim([0, 0.1])
 
         # Curve fitting:
         er = [ max(1e-16*d, e) for d, e in izip(ds, er) ]
@@ -181,9 +180,9 @@ for packing, subplot in izip(np.linspace(0.1, 0.9, 5) * np.pi/6,
                     popt[0], np.sqrt(pcov[0][0]), popt[1], np.sqrt(pcov[1][1])))
 
         # normal plot
-        xs = np.logspace(-7, -4, 100)
-        plt.plot(xs, fit_func(xs, *popt))
-        plt.errorbar(1.0/ns**(1/1.), ds, fmt='.', yerr=er)
+        xs = np.linspace(0, 0.1, 100)
+        plt.plot(xs, fit_func(xs**3., *popt))
+        plt.errorbar(1.0/ns**(1/3.), ds, fmt='.', yerr=er)
 
         #plt.ylim(popt[0] * np.array([0.90, 1.02]))
         """
