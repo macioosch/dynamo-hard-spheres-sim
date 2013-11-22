@@ -12,8 +12,8 @@ input_files = glob("csv/convergence-256000-0.*.csv")
 #input_files = glob("csv/convergence-1000188-0.*.csv")
 
 #plotted_parameter = "msds_diffusion"
-#plotted_parameter = "pressures_collision"
-plotted_parameter = "pressures_virial"
+plotted_parameter = "pressures_collision"
+#plotted_parameter = "pressures_virial"
 
 #plotted_parameter = "msds_val"
 #plotted_parameter = "times"
@@ -66,8 +66,9 @@ for file_number, file_name in enumerate(sorted(input_files)):
             + data["std_" + plotted_parameter][skip_points:])/data[plotted_parameter][-1], alpha=0.3)
     plt.plot((equilibrated_collisions / n_atoms)[skip_points:],
             -1 + data[plotted_parameter][skip_points:]/data[plotted_parameter][-1], lw=2)
-    plt.ylim(data["std_" + plotted_parameter][-1]*3*np.array([-1, 1])/data[plotted_parameter][-1])
-    plt.xlim([0, 1e5])
+    plt.ylim(data["std_" + plotted_parameter][-1]*20*np.array([-1, 1])/data[plotted_parameter][-1])
+    plt.xscale("log")
+    plt.xlim([1e3, 1e5])
     plt.legend(["Density {}".format(data["densities"][0])], loc="lower right")
     ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2e'))
     plt.xlabel("Collisions per sphere")
