@@ -67,12 +67,12 @@ for file_number, file_name in enumerate(sorted(input_files)):
     plt.plot((equilibrated_collisions / n_atoms)[skip_points:],
             -1 + data[plotted_parameter][skip_points:]/data[plotted_parameter][-1], lw=2)
     plt.ylim(data["std_" + plotted_parameter][-1]*20*np.array([-1, 1])/data[plotted_parameter][-1])
-    plt.xscale("log")
-    plt.xlim([1e3, 1e5])
-    plt.legend(["Density {}".format(data["densities"][0])], loc="lower right")
+    #plt.xscale("log")
+    plt.xlim([0, 1e5])
+    plt.legend(["$\\rho\\sigma^3=\\ {}$".format(data["densities"][0])], loc="lower right")
     ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2e'))
-    plt.xlabel("Collisions per sphere")
-    plt.ylabel("Delta")
+    plt.xlabel("$C/N$")
+    plt.ylabel("$[Z_{MD}(C) / Z_{MD}(C=10^5 N)] - 1$")
     """
     ###   1 graph: D(t)   ###
     show_legend = True
