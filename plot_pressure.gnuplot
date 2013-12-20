@@ -21,6 +21,13 @@ c2 = 56.9
 y2(x) = c2*x**2 + b2*x + a2
 fit y2(x) file u 1:6 via a2,b2,c2
 
+a3 = -2.85
+b3 = 13.3
+c3 = -56.9
+d3 = 100.0
+y3(x) = d3*x**3 + c3*x**2 + b3*x + a3
+fit y3(x) file u 1:6 via a3,b3,c3,d3
+
 unset key
 set format x "%.3f"
 set xlabel "Packing fraction {/Symbol z}"
@@ -39,6 +46,13 @@ set format y "%.1f"
 set ytics 1
 set yrange [-5:5]
 plot file u 1:( 1e5*($6-y2($1)) ):( 1e5*$11 ) w yerrorbars
+
+set output "plots/cubic.pdf"
+set ylabel "Compressibility difference {/Symbol D}Z_{MD} / 10^{–5}"
+set format y "%.1f"
+set ytics 1
+set yrange [-5:5]
+plot file u 1:( 1e5*($6-y3($1)) ):( 1e5*$11 ) w yerrorbars
 
 set key top left invert
 

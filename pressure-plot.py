@@ -19,7 +19,8 @@ data = { i:[] for i in varying_parameters }
 data = dict(data.items() + {"packings": [], "collisions": [], "n_atoms": []}.items())
 
 input_files = sorted(glob.glob("/home/mc/Dropbox/staż 2013/02-hard-spheres/"
-        "results/1098500_*_219700000_1098500000.xml.bz2"))
+        "results/256000_*_3840000000_19200000000.xml.bz2"))
+        #"results/1098500_*_219700000_1098500000.xml.bz2"))
 #print("Got {} files.".format(len(input_files)))
 
 for input_file in input_files:
